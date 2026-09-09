@@ -146,9 +146,20 @@
                     <input type="text" id="task-name" class="w-full p-2 border rounded" placeholder="เช่น งานทำความสะอาดผิวทาง" onkeyup="updateText()">
                 </div>
 
+                <!-- 💡 ค่ายกล Dropdown 2 ชั้น (สายทาง & ตอน) -->
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">ทางหลวงหมายเลข (ตอน)</label>
-                    <input type="text" id="route-name" class="w-full p-2 border rounded" placeholder="เช่น 42 ตอน ดอนยาง - บ้านดี" onkeyup="updateText()">
+                    <label class="block text-gray-700 font-bold mb-2">สายทาง (ทล.)</label>
+                    <select id="route-select" class="w-full p-2 border rounded" onchange="updateSectionDropdown()">
+                        <option value="">-- เลือกสายทาง --</option>
+                        <!-- ตัวเลือกจะถูกสร้างอัตโนมัติจากโค้ดด้านล่าง -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">ชื่อตอน</label>
+                    <select id="section-select" class="w-full p-2 border rounded" onchange="updateText()">
+                        <option value="">-- กรุณาเลือกสายทางก่อน --</option>
+                    </select>
                 </div>
 
                 <div>
@@ -194,26 +205,103 @@
     </div>
 
     <script>
+		// 💡 1. ฐานข้อมูลสายทาง (ดึงมาจากไฟล์ Excel ครบทั้ง 30 เส้นทาง)
+        const highwayData = {
+            "42": ["นาจวก - ดอนยาง", "ดอนยาง - บ้านดี", "บ้านดี - ปาลัส", "ปาลัส - กอตอ"],
+            "43": ["ปาแด - มะพร้าวต้นเดียว", "มะพร้าวต้นเดียว - ปูยุดบารู", "ปูยุดบารู - ตันหยงลิมอ", "ตันหยงลิมอ - บ้านดี"],
+            "409": ["นาเกตุ - ป่าพ้อ"],
+            "410": ["ปัตตานี - ยะลา"],
+            "418": ["งาแม่ - ยุโป"],
+            "4060": ["สายบุรี - กะรุบี"],
+            "4061": ["ยะรัง - สะกำ", "สะกำ - ปะนาเระ"],
+            "4071": ["วังพญา - พิเทน"],
+            "4074": ["กะลาพอ - ปากู"],
+            "4075": ["ตอหลัง - บ้านนอก"],
+            "4076": ["บ้านใหม่ - ปาเซปูเต๊ะ"],
+            "4092": ["จะรังตาดง - มายอ"],
+            "4157": ["ละหาร - บางเก่า", "บางเก่า - ปะนาเระ"],
+            "4167": ["ป่าไหม้ - ไทรทอง"],
+            "4168": ["ปะลุกาสาเมาะ - ตะโละดือรามัน"],
+            "4296": ["งาแม่ - ดอนรัก"],
+            "4297": ["ทางเข้าบ้านดี"],
+            "4298": ["ทางเข้าโรงพยาบาลยะหริ่ง"],
+            "4299": ["ทางเข้าสายบุรี"],
+            "4324": ["ทางเข้าปะนาเระ"],
+            "4334": ["ทางเข้าบางมะรวด"],
+            "4335": ["ทางเข้าหาดแฆแฆ"],
+            "4336": ["ทางเข้าชมวิว"],
+            "4337": ["ป่าไหม้ - แยกชมวิว"],
+            "4354": ["ทางเข้าดอนรัก"],
+            "4355": ["ทางเข้ารามโกมุท"],
+            "4356": ["ทางเข้านาเกลือ"],
+            "4357": ["ทางเข้ามัสยิดกรือเซะ"],
+            "4358": ["ทางเข้าบือเจาะ"],
+            "4359": ["ทางเข้าบางปู"]
+        };
+		
         function setTodayDate() {
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             const today = new Date();
-            const date = today.getDate();
-            const month = months[today.getMonth()];
-            const year = today.getFullYear() + 543;
-            document.getElementById('display-date').innerText = `วันที่ ${date} ${month} ${year}`;
+            let dateString = `วันที่ ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear() + 543}`;
+            document.getElementById('display-date').innerText = convertToThaiNumerals(dateString);
         }
         setTodayDate();
 
+		// 💡 3. ฟังก์ชันดึง "สายทาง" มาสร้างเป็นตัวเลือกอัตโนมัติ
+        function initRouteDropdown() {
+            const routeSelect = document.getElementById("route-select");
+            for (const hw in highwayData) {
+                const option = document.createElement("option");
+                option.value = hw;
+                option.text = "ทล." + hw;
+                routeSelect.appendChild(option);
+            }
+        }
+        initRouteDropdown();
+
+        // 💡 4. ฟังก์ชันดึง "ตอน" มาแสดงเมื่อมีการเลือกสายทาง
+        function updateSectionDropdown() {
+            const route = document.getElementById("route-select").value;
+            const sectionSelect = document.getElementById("section-select");
+            
+            sectionSelect.innerHTML = '<option value="">-- เลือกตอน --</option>'; // ล้างค่าเก่า
+
+            if (route && highwayData[route]) {
+                const sections = highwayData[route];
+                sections.forEach(function(sec) {
+                    const option = document.createElement("option");
+                    option.value = sec;
+                    option.text = sec;
+                    sectionSelect.appendChild(option);
+                });
+            }
+            updateText(); 
+        }
         // เปลี่ยนให้มาเปลี่ยน src ของแท็ก img แทน
         function changeTemplate() {
             const selectedImage = document.getElementById('unit-select').value;
             document.getElementById('bg-image').src = selectedImage;
         }
 
+        // 💡 5. อัปเดตข้อความลงบนภาพเทมเพลต (ดึงค่าจาก Dropdown ใหม่)
         function updateText() {
-            document.getElementById('display-task').innerText = document.getElementById('task-name').value || 'งาน';
-            document.getElementById('display-route').innerText = 'ทางหลวงหมายเลข ' + (document.getElementById('route-name').value || 'ทางหลวงหมายเลข');
-            document.getElementById('display-km').innerText = document.getElementById('km-text').value || 'กม.';
+            let task = document.getElementById('task-name').value || 'งาน';
+            let km = document.getElementById('km-text').value || 'กม.';
+            
+            let routeVal = document.getElementById('route-select').value;
+            let sectionVal = document.getElementById('section-select').value;
+            let routeText = 'ทางหลวงหมายเลข';
+            
+            if (routeVal) {
+                routeText += ' ' + routeVal;
+                if (sectionVal) {
+                    routeText += ' ตอน ' + sectionVal;
+                }
+            }
+
+            document.getElementById('display-task').innerText = convertToThaiNumerals(task);
+            document.getElementById('display-route').innerText = convertToThaiNumerals(routeText);
+            document.getElementById('display-km').innerText = convertToThaiNumerals(km);
         }
 
         function handleImages() {
