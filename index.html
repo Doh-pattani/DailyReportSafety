@@ -250,14 +250,20 @@
 		// 💡 3. ฟังก์ชันดึง "สายทาง" มาสร้างเป็นตัวเลือกอัตโนมัติ
         function initRouteDropdown() {
             const routeSelect = document.getElementById("route-select");
-            for (const hw in highwayData) {
-                const option = document.createElement("option");
-                option.value = hw;
-                option.text = "ทล." + hw;
-                routeSelect.appendChild(option);
+            
+            // เช็กให้ชัวร์ว่าหากล่องเจอ ค่อยเติมข้อมูล
+            if (routeSelect) {
+                for (const hw in highwayData) {
+                    const option = document.createElement("option");
+                    option.value = hw;
+                    option.text = "ทล." + hw;
+                    routeSelect.appendChild(option);
+                }
             }
         }
-        initRouteDropdown();
+        
+        // 💡 เคล็ดวิชาแก้บั๊ก: สั่งให้รอโหลด HTML เสร็จก่อนค่อยรันฟังก์ชันนี้
+        window.addEventListener('DOMContentLoaded', initRouteDropdown);
 
         // 💡 4. ฟังก์ชันดึง "ตอน" มาแสดงเมื่อมีการเลือกสายทาง
         function updateSectionDropdown() {
