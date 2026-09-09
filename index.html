@@ -206,7 +206,7 @@
 
     <script>
 		// 💡 1. ฐานข้อมูลสายทาง (ดึงมาจากไฟล์ Excel ครบทั้ง 30 เส้นทาง)
-        const routeselect = {
+        const highwayData = {
             "42": ["นาจวก - ดอนยาง", "ดอนยาง - บ้านดี", "บ้านดี - ปาลัส", "ปาลัส - กอตอ"],
             "43": ["ปาแด - มะพร้าวต้นเดียว", "มะพร้าวต้นเดียว - ปูยุดบารู", "ปูยุดบารู - ตันหยงลิมอ", "ตันหยงลิมอ - บ้านดี"],
             "409": ["นาเกตุ - ป่าพ้อ"],
@@ -242,8 +242,10 @@
         function setTodayDate() {
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             const today = new Date();
-            let dateString = `วันที่ ${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear() + 543}`;
-            document.getElementById('display-date').innerText = convertToThaiNumerals(dateString);
+            const date = today.getDate();
+            const month = months[today.getMonth()];
+            const year = today.getFullYear() + 543;
+            document.getElementById('display-date').innerText = `วันที่ ${date} ${month} ${year}`;
         }
         setTodayDate();
 
