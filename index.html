@@ -291,43 +291,45 @@
             document.getElementById('bg-image').src = selectedImage;
         }
 
-        // 💡 5. อัปเดตข้อความลงบนภาพเทมเพลตแบบรัดกุม 100%
-        function updateText() {
-            try {
-                // ดึงข้อมูลจากแผงควบคุม (เช็กความปลอดภัยก่อนดึง)
-                let taskInput = document.getElementById('task-name');
-                let kmInput = document.getElementById('km-text');
-                let routeSelect = document.getElementById('route-select');
-                let sectionSelect = document.getElementById('section-select');
-
-                let task = taskInput ? taskInput.value : '';
-                let km = kmInput ? kmInput.value : '';
-                let routeVal = routeSelect ? routeSelect.value : '';
-                let sectionVal = sectionSelect ? sectionSelect.value : '';
-                
-                // ประกอบร่างข้อความสายทางและตอน
-                let routeText = 'ทางหลวงหมายเลข';
-                if (routeVal !== '') {
-                    routeText += ' ' + routeVal;
-                    if (sectionVal !== '') {
-                        routeText += ' ตอน ' + sectionVal;
-                    }
-                }
-
-                // ป้องกันกรณีไม่ได้กรอกข้อมูล ให้แสดงขีด (-) ไว้
-                task = task || '-';
-                km = km || '-';
-
-                // อัปเดตลงไปในเทมเพลต
-                document.getElementById('display-task').innerText = formatText(task);
-                document.getElementById('display-route').innerText = formatText(routeText);
-                document.getElementById('display-km').innerText = formatText(km);
-                
-            } catch (error) {
-                console.log("พบปัญหาการอัปเดตข้อความ:", error);
+        // 💡 5. อัปเดตข้อความลงบนภาพเทมเพลตแบบรัดกุม 100%        
+function updateText() {                
+    try { // ✅ เพิ่ม try ที่ขาดหายไป
+        // ดึงข้อมูลจากแผงควบคุม (เช็กความปลอดภัยก่อนดึง)                
+        let taskInput = document.getElementById('task-name');                
+        let kmInput = document.getElementById('km-text');                
+        let routeSelect = document.getElementById('route-select');                
+        let sectionSelect = document.getElementById('section-select');
+        
+        let task = taskInput ? taskInput.value : '';                
+        let km = kmInput ? kmInput.value : '';                
+        let routeVal = routeSelect ? routeSelect.value : '';                
+        let sectionVal = sectionSelect ? sectionSelect.value : '';                                
+        
+        // ประกอบร่างข้อความสายทางและตอน                
+        let routeText = 'ทางหลวงหมายเลข';                
+        if (routeVal !== '') {                    
+            routeText += ' ' + routeVal;                    
+            if (sectionVal !== '') {                        
+                routeText += ' ตอน ' + sectionVal;                    
             }
-        }
-
+        } // ✅ ปิดวงเล็บปีกกา if (routeVal) ให้ตรงก่อนกำหนดค่าเริ่มต้น
+        
+        // ✅ ย้ายส่วนนี้ออกมาจากใน if เพื่อทำงานเสมอ
+        // ป้องกันกรณีไม่ได้กรอกข้อมูล ให้แสดงขีด (-) ไว้                
+        task = task || '-';                
+        km = km || '-';
+                
+        // ✅ แก้ routeText() → เป็นข้อความธรรมดา ไม่ใช่ฟังก์ชัน
+        // อัปเดตลงไปในเทมเพลต                
+        document.getElementById('display-task').innerText = task;                
+        document.getElementById('display-route').innerText = routeText;                
+        document.getElementById('display-km').innerText = km;                            
+        
+    } catch (error) {                
+        console.log("พบปัญหาการอัปเดตข้อความ:", error);		
+    }
+} // ✅ ปิดฟังก์ชันให้ครบถ้วน	
+		
         function handleImages() {
             const files = document.getElementById('image-upload').files;
             const grid = document.getElementById('image-grid');
