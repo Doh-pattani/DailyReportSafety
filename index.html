@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบรายงานประจำวัน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* 1. ตั้งค่ากรอบเทมเพลตให้ความสูงยืดหยุ่นตามสัดส่วนรูปจริง */
+#template-container {
+    width: 800px;
+    position: relative;
+    background-color: #fff;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    
+    /* 💡 จุดสำคัญ: กำหนดจุดหมุนซ้ายบน เพื่อให้จอเล็กลงแล้วไม่เบี้ยว */
+    transform-origin: top left; 
+}
+
+/* 2. นี่คือพระเอก "Fit to Frame" ของเราครับ */
+#bg-image {
+    width: 100%;
+    height: auto; /* สั่งให้รูปโชว์สัดส่วนจริง ไม่มีการบีบหรือครอป */
+    display: block;
+    z-index: 0;
+}
+
+/* 3. ตำแหน่งข้อความ */
+/* 3.1 เลเยอร์วันที่ (สำหรับแถบสีเทาอ่อนด้านบน) */
+#date-overlay {
+    position: absolute;
+    top: 55px; /* 💡 ปรับให้ตรงกับแถบเทาอ่อน (ที่เคยปรับไว้ 140px น่าจะกำลังสวยครับ) */
+    width: 100%;
+    text-align: center;
+    font-size: 16px; /* ปรับขนาดฟอนต์วันที่ตามต้องการ */
+    font-weight: bold;
+    color: #000;
+    z-index: 10;
+}
+
+/* 4. ค่ายกล Flexbox (กำหนดขอบเขตกล่องสีแดง) */
+#info-box-overlay {
+    position: absolute;
+    
+    /* 💡 4.1. ปรับตำแหน่งและขนาดของกล่องแดง */
+    top: 120px;    /* ระยะจากขอบบน */
+    left: 10px;    /* ระยะจากขอบซ้าย */
+    width: 230px;  /* ความกว้าง (ล็อกไว้ไม่ให้ชนรูปคน) */
+    height: 80px; /* ความสูงของพื้นที่สีเทาอ่อน */
+    
+    /* 💡 4.2. พลังของ Flexbox ที่จะช่วยจัดตำแหน่งให้อัตโนมัติ */
+    display: flex;
+    flex-direction: column; /* บังคับให้ข้อความเรียงจากบนลงล่าง */
+    justify-content: center; /* จัดให้ข้อความอยู่ "กึ่งกลางแนวตั้ง" (บน-ล่าง) ของกล่องเสมอ */
+    align-items: center; /* จัดให้ข้อความ "ชิดซ้าย" (ถ้าอยากให้จัดกลางเป๊ะๆ เปลี่ยนเป็น center ครับ) */
+    
+    text-align: center;      /* 💡 สั่งให้ตัวหนังสือจัดกลาง */
+    gap: 4px;               /* 💡 ใช้ gap ในการสร้างช่องไฟระหว่างบรรทัดแทน mb-2 (ปรับตัวเลขได้ตา
+	
+    color: #000;
+    z-index: 10;
+    
+    /* เอาบรรทัดล่างนี้ออกตอนใช้งานจริงนะครับ (ใส่ไว้ให้เห็นขอบเขตกล่องตอนจัดหน้าจอเฉยๆ) */
+    border: 2px solid red;
+}
+
+/* 💡 4.4 แยกกำหนดขนาดฟอนต์ให้แต่ละบรรทัดได้อิสระ */
+#display-task {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#display-route, #display-km {
+    font-size: 12px;
+    font-weight: bold;
+}
+stellular-platypus-f18ef3
+
+/* 5. ค่ายกลไร้พ่าย (สยบปัญหา html2canvas บนมือถือ) */
+#image-grid {
+    position: absolute;
+    top: 500px;
+    left: 40px;
+    width: 720px; /* 💡 ล็อกความกว้างพื้นที่ให้เป๊ะ (800 - ซ้าย 40 - ขวา 40 = 720px) */
+    height: 550px;
+    
+    display: block; /* 💡 กลับสู่สามัญ ไม่ใช้ Flex/Grid เพื่อความชัวร์ 100% */
+    font-size: 0;   /* ลบช่องว่างแฝงของระบบ */
+    text-align: center; 
+    z-index: 10;
+}
+
+/* ล็อกขนาดกล่องย่อยเป็น "พิกเซล" ชัดเจน ห้ามเพี้ยน */
+.img-wrapper {
+    display: inline-block;
+    width: 345px;  /* 💡 ล็อกความกว้างเป๊ะๆ (2 รูป = 690px เหลือที่ว่างเป็นช่องไฟ 30px พอดี) */
+    height: 255px; /* ล็อกความสูง */
+    margin: 5px;   /* ช่องไฟระหว่างรูป */
+    vertical-align: top;
+}
+
+/* จัดรูปภาพให้เต็มกล่อง */
+.uploaded-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* ระบบอนุโลม 2 รูป (ดันให้ลงมาอยู่กึ่งกลาง) */
+#image-grid.two-images {
+    padding-top: 135px; /* เพิ่มระยะด้านบนให้รูปดันลงมาตรงกลางพอดี */
+}
+    </style>
+</head>
+<body class="bg-gray-100 p-8 font-sans">
+
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
+        
+        <!-- แผงควบคุม (สำหรับกรอกข้อมูล) -->
+        <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md h-fit">
+            <h2 class="text-2xl font-bold mb-6 text-blue-800">สร้างรูปรายงาน</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">เลือกหน่วยงาน</label>
+                    <!-- อัปเดต Value ให้ตรงกับชื่อไฟล์ภาษาอังกฤษ -->
+                    <select id="unit-select" class="w-full p-2 border rounded" onchange="changeTemplate()">
+                        <option value="bg-khokpho.png">หมวดทางหลวงโคกโพธิ์</option>
+                        <option value="bg-nongchik.png">หมวดทางหลวงหนองจิก</option>
+                        <option value="bg-saiburi.png">หมวดทางหลวงสายบุรี</option>
+                        <option value="bg-panare.png">หมวดทางหลวงปะนาเระ</option>
+                        <option value="bg-yarang.png">หมวดทางหลวงยะรัง</option>
+                        <option value="bg-electric.png">งานไฟฟ้า</option>
+                        <option value="bg-safety.png">งานอำนวยความปลอดภัย</option>
+                        <option value="bg-plan.png">งานวางแผน</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">ชื่องาน</label>
+                    <input type="text" id="task-name" class="w-full p-2 border rounded" placeholder="เช่น งานทำความสะอาดผิวทาง" onkeyup="updateText()">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">ทางหลวงหมายเลข (ตอน)</label>
+                    <input type="text" id="route-name" class="w-full p-2 border rounded" placeholder="เช่น 42 ตอน ดอนยาง - บ้านดี" onkeyup="updateText()">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">กม. ที่ดำเนินงาน</label>
+                    <input type="text" id="km-text" class="w-full p-2 border rounded" placeholder="เช่น กม.106+950 - กม.108+850" onkeyup="updateText()">
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2">อัปโหลดรูปหน้างาน (เลือกพร้อมกัน 2-4 รูป)</label>
+                    <input type="file" id="image-upload" accept="image/*" multiple class="w-full p-2 border rounded" onchange="handleImages()">
+                </div>
+
+                <button onclick="exportImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mt-4">
+                    📥 จัดเก็บลงเครื่อง
+                </button>
+            </div>
+        </div>
+
+        <!-- พื้นที่แสดงผล (Preview) -->
+		<div id="template-wrapper" class="w-full lg:w-2/3 overflow-hidden">
+			<div id="template-container">
+				<!-- 💡 เคล็ดลับ: เพิ่ม onload ให้แอปคำนวณสัดส่วนตอนโหลดรูปเสร็จ -->
+				<img id="bg-image" src="bg-khokpho.png" alt="Background" onload="adjustScale()">
+                
+				<!-- เลเยอร์วันที่ (แยกอิสระ ควบคุมพิกัดเอง) -->
+				<div id="date-overlay">
+				    <p id="display-date">วันที่ -</p>
+				</div>
+
+				<!-- เลเยอร์รายละเอียดงานรวม (ตีกล่องตามกรอบสีแดง) -->
+				<div id="info-box-overlay">
+				    <p id="display-task">-</p>
+				    <p id="display-route">-</p>
+				    <p id="display-km">-</p>
+				</div>
+
+                <!-- เลเยอร์รูปภาพ -->
+                <div id="image-grid"></div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function setTodayDate() {
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const today = new Date();
+            const date = today.getDate();
+            const month = months[today.getMonth()];
+            const year = today.getFullYear() + 543;
+            document.getElementById('display-date').innerText = `วันที่ ${date} ${month} ${year}`;
+        }
+        setTodayDate();
+
+        // เปลี่ยนให้มาเปลี่ยน src ของแท็ก img แทน
+        function changeTemplate() {
+            const selectedImage = document.getElementById('unit-select').value;
+            document.getElementById('bg-image').src = selectedImage;
+        }
+
+        function updateText() {
+            document.getElementById('display-task').innerText = document.getElementById('task-name').value || 'งาน';
+            document.getElementById('display-route').innerText = 'ทางหลวงหมายเลข ' + (document.getElementById('route-name').value || 'ทางหลวงหมายเลข');
+            document.getElementById('display-km').innerText = 'กม.' + document.getElementById('km-text').value || 'กม.';
+        }
+
+        function handleImages() {
+            const files = document.getElementById('image-upload').files;
+            const grid = document.getElementById('image-grid');
+            grid.innerHTML = ''; 
+            grid.className = ''; 
+
+            const limit = Math.min(files.length, 4);
+
+            if (limit === 3) grid.classList.add('three-images');
+            if (limit === 2) grid.classList.add('two-images');
+
+            for (let i = 0; i < limit; i++) {
+                const file = files[i];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'img-wrapper';
+                        
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'uploaded-img';
+                        
+                        wrapper.appendChild(img);
+                        grid.appendChild(wrapper);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // 💡 1. ฟังก์ชันย่อส่วนให้พอดีหน้าจอมือถือ (แต่ขนาดจริงยัง 800px)
+        function adjustScale() {
+            const wrapper = document.getElementById('template-wrapper');
+            const container = document.getElementById('template-container');
+            const wrapperWidth = wrapper.clientWidth; // ความกว้างของหน้าจอมือถือ
+            
+            if (wrapperWidth < 800) {
+                const scale = wrapperWidth / 800;
+                container.style.transform = `scale(${scale})`;
+                // หดความสูงของกล่องคลุมตามไปด้วย จะได้ไม่เหลือพื้นที่ว่างด้านล่าง
+                wrapper.style.height = (container.offsetHeight * scale) + 'px';
+            } else {
+                container.style.transform = 'none';
+                wrapper.style.height = 'auto';
+            }
+        }
+        
+        // สั่งให้ทำงานทุกครั้งที่หมุนจอ หรือโหลดหน้าจอ
+        window.addEventListener('load', adjustScale);
+        window.addEventListener('resize', adjustScale);
+
+        // 💡 2. อัปเดตปุ่มเซฟ ให้หลอกระบบว่าจอใหญ่ตอนแคปภาพ
+        function exportImage() {
+            const container = document.getElementById('template-container');
+            
+            html2canvas(container, {
+                scale: 2, 
+                useCORS: true,
+                windowWidth: 800,
+                // เคล็ดวิชาลับ: คืนร่างเทมเพลตเป็น 100% ชั่วคราวเฉพาะตอนแคปภาพ!
+                onclone: function(clonedDoc) {
+                    const clonedContainer = clonedDoc.getElementById('template-container');
+                    clonedContainer.style.transform = 'none';
+                }
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'รายงานประจำวัน.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
