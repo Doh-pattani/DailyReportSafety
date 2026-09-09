@@ -291,25 +291,41 @@
             document.getElementById('bg-image').src = selectedImage;
         }
 
-        // 💡 5. อัปเดตข้อความลงบนภาพเทมเพลต (ดึงค่าจาก Dropdown ใหม่)
+        // 💡 5. อัปเดตข้อความลงบนภาพเทมเพลตแบบรัดกุม 100%
         function updateText() {
-            let task = document.getElementById('task-name').value || 'งาน';
-            let km = document.getElementById('km-text').value || 'กม.';
-            
-            let routeVal = document.getElementById('route-select').value;
-            let sectionVal = document.getElementById('section-select').value;
-            let routeText = 'ทางหลวงหมายเลข';
-            
-            if (routeVal) {
-                routeText += ' ' + routeVal;
-                if (sectionVal) {
-                    routeText += ' ตอน ' + sectionVal;
-                }
-            }
+            try {
+                // ดึงข้อมูลจากแผงควบคุม (เช็กความปลอดภัยก่อนดึง)
+                let taskInput = document.getElementById('task-name');
+                let kmInput = document.getElementById('km-text');
+                let routeSelect = document.getElementById('route-select');
+                let sectionSelect = document.getElementById('section-select');
 
-            document.getElementById('display-task').innerText = convertToThaiNumerals(task);
-            document.getElementById('display-route').innerText = convertToThaiNumerals(routeText);
-            document.getElementById('display-km').innerText = convertToThaiNumerals(km);
+                let task = taskInput ? taskInput.value : '';
+                let km = kmInput ? kmInput.value : '';
+                let routeVal = routeSelect ? routeSelect.value : '';
+                let sectionVal = sectionSelect ? sectionSelect.value : '';
+                
+                // ประกอบร่างข้อความสายทางและตอน
+                let routeText = 'ทางหลวงหมายเลข';
+                if (routeVal !== '') {
+                    routeText += ' ' + routeVal;
+                    if (sectionVal !== '') {
+                        routeText += ' ตอน ' + sectionVal;
+                    }
+                }
+
+                // ป้องกันกรณีไม่ได้กรอกข้อมูล ให้แสดงขีด (-) ไว้
+                task = task || '-';
+                km = km || '-';
+
+                // อัปเดตลงไปในเทมเพลต
+                document.getElementById('display-task').innerText = formatText(task);
+                document.getElementById('display-route').innerText = formatText(routeText);
+                document.getElementById('display-km').innerText = formatText(km);
+                
+            } catch (error) {
+                console.log("พบปัญหาการอัปเดตข้อความ:", error);
+            }
         }
 
         function handleImages() {
