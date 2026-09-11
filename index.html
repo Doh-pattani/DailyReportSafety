@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบรายงานประจำวัน - ทางหลวงปลอดภัย ขับขี่สบายตา</title>
+    <title>ระบบรายงานประจำวัน</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -13,79 +13,69 @@
 	* {
         font-family: 'Sarabun', sans-serif !important;
     }
-        /* 1. ตั้งค่ากรอบเทมเพลตให้ความสูงยืดหยุ่นตามสัดส่วนรูปจริง */
 #template-container {
     width: 800px;
     position: relative;
     background-color: #fff;
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    
-    /* 💡 จุดสำคัญ: กำหนดจุดหมุนซ้ายบน เพื่อให้จอเล็กลงแล้วไม่เบี้ยว */
     transform-origin: top left; 
 }
-/* 2. นี่คือพระเอก "Fit to Frame" ของเราครับ */
 #bg-image {
     width: 100%;
-    height: auto; /* สั่งให้รูปโชว์สัดส่วนจริง ไม่มีการบีบหรือครอป */
+    height: auto;
     display: block;
     z-index: 0;
 }
-/* 3. ตำแหน่งข้อความ */
-/* 3.1 เลเยอร์วันที่ (สำหรับแถบสีเทาอ่อนด้านบน) */
 #date-overlay {
     position: absolute;
-    top: 140px; /* ปรับให้ตรงกับแถบเทาอ่อน */
+    top: 140px; /* 🔒 ล็อกพิกัดตายตัว */
+    left: 0;
     width: 100%;
     text-align: center;
     font-size: 32px;
     font-weight: bold;
     color: #000;
     z-index: 10;
+    transform: translateZ(0);
+    will-change: transform;
 }
-/* 4. ค่ายกล Flexbox (กำหนดขอบเขตกล่องสีแดง) */
 #info-box-overlay {
     position: absolute;
-    
-    /* ปรับตำแหน่งและขนาดของกล่องแดง */
-    top: 250px;    /* ระยะจากขอบบน */
-    left: 20px;    /* ระยะจากขอบซ้าย */
-    width: 600px;  /* ความกว้าง */
-    height: 200px; /* ความสูง */
-    
+    top: 250px;
+    left: 20px;
+    width: 520px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
     text-align: center;
     gap: 8px;
-    
     color: #000;
     z-index: 10;
 }
-/* แยกกำหนดขนาดฟอนต์ให้แต่ละบรรทัด */
 #display-task {
     font-size: 28px;
     font-weight: bold;
 }
 #display-route, #display-km {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
 }
-/* 5. ค่ายกลไร้พ่าย */
 #image-grid {
     position: absolute;
     top: 500px;
     left: 40px;
     width: 720px;
     height: 550px;
-    
     display: block;
     font-size: 0;
     text-align: center; 
     z-index: 10;
 }
-/* ล็อกขนาดกล่องย่อย */
 .img-wrapper {
     display: inline-block;
     width: 345px;
@@ -93,7 +83,6 @@
     margin: 5px;
     vertical-align: top;
 }
-/* จัดรูปภาพให้เต็มกล่อง */
 .uploaded-img {
     width: 100%;
     height: 100%;
@@ -102,7 +91,6 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-/* ✅ เพิ่มการจัดเรียงรูป 2 และ 3 รูป */
 #image-grid.two-images .img-wrapper {
     width: 48%;
 }
@@ -113,12 +101,8 @@
 </head>
 <body class="bg-gray-100 p-8 font-sans">
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-        
-        <!-- แผงควบคุม -->
         <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md h-fit">
-			<div>ทางหลวงปลอดภัย ขับขี่สบายตา</div>
             <h2 class="text-2xl font-bold mb-6 text-blue-800">สร้างรูปรายงาน</h2>
-            
             <div class="space-y-4">
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">เลือกหน่วยงาน</label>
@@ -162,31 +146,24 @@
                 </button>
             </div>
         </div>
-        
-        <!-- พื้นที่แสดงผล -->
 		<div id="template-wrapper" class="w-full lg:w-2/3 overflow-hidden">
 			<div id="template-container">
 				<img id="bg-image" src="bg-khokpho.png" alt="Background" 
                      onload="adjustScale()"
                      onerror="this.src='https://via.placeholder.com/800x1100/ffffff/000000?text=ไม่พบรูปภาพ'; adjustScale()">
-                
-				<!-- เลเยอร์วันที่ -->
 				<div id="date-overlay">
 				    <p id="display-date">วันที่ -</p>
 				</div>
-				<!-- เลเยอร์รายละเอียดงาน -->
 				<div id="info-box-overlay">
 				    <p id="display-task">-</p>
 				    <p id="display-route">-</p>
 				    <p id="display-km">-</p>
 				</div>
-                <!-- เลเยอร์รูปภาพ -->
                 <div id="image-grid"></div>
             </div>
         </div>
     </div>
     <script>
-		// 💡 ฐานข้อมูลสายทาง
         const highwayData = {
             "42": ["นาจวก - ดอนยาง", "ดอนยาง - บ้านดี", "บ้านดี - ปาลัส", "ปาลัส - กอตอ"],
             "43": ["ปาแด - มะพร้าวต้นเดียว", "มะพร้าวต้นเดียว - ปูยุดบารู", "ปูยุดบารู - ตันหยงลิมอ", "ตันหยงลิมอ - บ้านดี"],
@@ -219,8 +196,6 @@
             "4358": ["ทางเข้าบือเจาะ"],
             "4359": ["ทางเข้าบางปู"]
         };
-		
-        // 💡 แสดงวันที่ปัจจุบัน
         function setTodayDate() {
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             const today = new Date();
@@ -230,8 +205,6 @@
             document.getElementById('display-date').innerText = `วันที่ ${date} ${month} ${year}`;
         }
         setTodayDate();
-
-		// 💡 สร้างรายการสายทาง
         function initRouteDropdown() {
             const routeSelect = document.getElementById("route-select");
             if (routeSelect) {
@@ -243,12 +216,9 @@
                 }
             }
         }
-        
-        // 💡 เมื่อเลือกสายทาง → แสดงรายการตอน
         function updateSectionDropdown() {
             const route = document.getElementById("route-select").value;
             const sectionSelect = document.getElementById("section-select");
-            
             sectionSelect.innerHTML = '<option value="">-- เลือกตอน --</option>';
             if (route && highwayData[route]) {
                 highwayData[route].forEach(function(sec) {
@@ -260,27 +230,31 @@
             }
             updateText();
         }
-
-        // 💡 เปลี่ยนรูปพื้นหลังตามหน่วยงาน + ปรับสเกลใหม่
         function changeTemplate() {
             const selectedImage = document.getElementById('unit-select').value;
             document.getElementById('bg-image').src = selectedImage;
-            adjustScale(); // ✅ ปรับสเกลใหม่เมื่อเปลี่ยนรูป
+            adjustScale();
         }
-
-        // 💡 อัปเดตข้อความลงภาพ
+        function adjustFontSize(element, maxFontSize, minFontSize) {
+            if (!element) return;
+            const containerWidth = element.offsetWidth - 10;
+            let fontSize = maxFontSize;
+            element.style.fontSize = fontSize + 'px';
+            while (element.scrollWidth > containerWidth && fontSize > minFontSize) {
+                fontSize -= 1;
+                element.style.fontSize = fontSize + 'px';
+            }
+        }
         function updateText() {                
             try {
                 let taskInput = document.getElementById('task-name');                
                 let kmInput = document.getElementById('km-text');                
                 let routeSelect = document.getElementById('route-select');                
                 let sectionSelect = document.getElementById('section-select');
-                
                 let task = taskInput ? taskInput.value : '';                
                 let km = kmInput ? kmInput.value : '';                
                 let routeVal = routeSelect ? routeSelect.value : '';                
                 let sectionVal = sectionSelect ? sectionSelect.value : '';                                
-                
                 let routeText = 'ทางหลวงหมายเลข';
                 if (routeVal !== '') {                    
                     routeText += ' ' + routeVal;                    
@@ -288,22 +262,21 @@
                         routeText += ' ตอน ' + sectionVal;                    
                     }
                 } else {
-                    routeText = '-'; // ✅ ถ้ายังไม่เลือกสายทาง แสดงขีด
+                    routeText = '-';
                 }
-                
                 task = task || '-';                
                 km = km || '-';
-                
-                document.getElementById('display-task').innerText = task;                
-                document.getElementById('display-route').innerText = routeText;                
-                document.getElementById('display-km').innerText = km;                            
-                
+                const elTask = document.getElementById('display-task');
+                const elRoute = document.getElementById('display-route');
+                const elKm = document.getElementById('display-km');
+                elTask.innerText = task;                
+                elRoute.innerText = routeText;                
+                elKm.innerText = km;                            
+                adjustFontSize(elRoute, 26, 16);
             } catch (error) {                
                 console.log("พบปัญหาการอัปเดตข้อความ:", error);		
             }
         }
-        
-        // 💡 แสดงรูปภาพที่อัปโหลด
         function handleImages() {
             const files = document.getElementById('image-upload').files;
             const grid = document.getElementById('image-grid');
@@ -319,11 +292,9 @@
                     reader.onload = function(e) {
                         const wrapper = document.createElement('div');
                         wrapper.className = 'img-wrapper';
-                        
                         const img = document.createElement('img');
                         img.src = e.target.result;
                         img.className = 'uploaded-img';
-                        
                         wrapper.appendChild(img);
                         grid.appendChild(wrapper);
                     }
@@ -331,33 +302,40 @@
                 }
             }
         }
-
-        // 💡 ปรับย่อส่วนให้พอดีจอ
         function adjustScale() {
             const wrapper = document.getElementById('template-wrapper');
             const container = document.getElementById('template-container');
+            const dateOverlay = document.getElementById('date-overlay');
             const wrapperWidth = wrapper.clientWidth;
             
             if (wrapperWidth < 800) {
                 const scale = wrapperWidth / 800;
                 container.style.transform = `scale(${scale})`;
+                // ✅ ชดเชยสเกลให้วันที่คงที่ ไม่เลื่อนตำแหน่ง
+                dateOverlay.style.transform = `scale(${1/scale}) translateZ(0)`;
+                dateOverlay.style.transformOrigin = 'top center';
                 wrapper.style.height = (container.offsetHeight * scale) + 'px';
             } else {
                 container.style.transform = 'none';
+                dateOverlay.style.transform = 'none';
                 wrapper.style.height = 'auto';
             }
         }
-
-        // 💡 ส่งออกเป็นรูปภาพ
         function exportImage() {
             const container = document.getElementById('template-container');
-            
             html2canvas(container, {
                 scale: 2, 
                 useCORS: true,
-                windowWidth: 800,
+                windowWidth: 800, // ✅ บังคับความกว้าง 800px ตอนเรนเดอร์
                 onclone: function(clonedDoc) {
-                    clonedDoc.getElementById('template-container').style.transform = 'none';
+                    const clonedContainer = clonedDoc.getElementById('template-container');
+                    const clonedDate = clonedDoc.getElementById('date-overlay');
+                    // ✅ ล็อกพิกัดวันที่ตายตัวก่อนแคป
+                    clonedContainer.style.transform = 'none';
+                    clonedDate.style.top = '140px';
+                    clonedDate.style.left = '0';
+                    clonedDate.style.width = '100%';
+                    clonedDate.style.transform = 'none';
                 }
             }).then(canvas => {
                 const link = document.createElement('a');
@@ -366,14 +344,14 @@
                 link.click();
             });
         }
-
-        // 💡 เริ่มทำงานเมื่อโหลดหน้าเสร็จ
         window.addEventListener('DOMContentLoaded', function() {
             initRouteDropdown();
-            updateText(); // ✅ แสดงค่าเริ่มต้นทันที
+            updateText();
         });
         window.addEventListener('load', adjustScale);
         window.addEventListener('resize', adjustScale);
     </script>
 </body>
 </html>
+
+
