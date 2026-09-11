@@ -23,7 +23,6 @@
     /* 💡 จุดสำคัญ: กำหนดจุดหมุนซ้ายบน เพื่อให้จอเล็กลงแล้วไม่เบี้ยว */
     transform-origin: top left; 
 }
-
 /* 2. นี่คือพระเอก "Fit to Frame" ของเราครับ */
 #bg-image {
     width: 100%;
@@ -31,80 +30,69 @@
     display: block;
     z-index: 0;
 }
-
 /* 3. ตำแหน่งข้อความ */
 /* 3.1 เลเยอร์วันที่ (สำหรับแถบสีเทาอ่อนด้านบน) */
 #date-overlay {
     position: absolute;
-    top: 140px; /* 💡 ปรับให้ตรงกับแถบเทาอ่อน (ที่เคยปรับไว้ 140px น่าจะกำลังสวยครับ) */
+    top: 140px; /* ปรับให้ตรงกับแถบเทาอ่อน */
     width: 100%;
     text-align: center;
-    font-size: 32px; /* ปรับขนาดฟอนต์วันที่ตามต้องการ */
+    font-size: 32px;
     font-weight: bold;
     color: #000;
     z-index: 10;
 }
-
 /* 4. ค่ายกล Flexbox (กำหนดขอบเขตกล่องสีแดง) */
 #info-box-overlay {
     position: absolute;
     
-    /* 💡 4.1. ปรับตำแหน่งและขนาดของกล่องแดง */
+    /* ปรับตำแหน่งและขนาดของกล่องแดง */
     top: 250px;    /* ระยะจากขอบบน */
     left: 20px;    /* ระยะจากขอบซ้าย */
-    width: 520px;  /* ความกว้าง (ล็อกไว้ไม่ให้ชนรูปคน 480px) */
-    height: 200px; /* ความสูงของพื้นที่สีเทาอ่อน */
+    width: 600px;  /* ความกว้าง */
+    height: 200px; /* ความสูง */
     
-    /* 💡 4.2. พลังของ Flexbox ที่จะช่วยจัดตำแหน่งให้อัตโนมัติ */
     display: flex;
-    flex-direction: column; /* บังคับให้ข้อความเรียงจากบนลงล่าง */
-    justify-content: center; /* จัดให้ข้อความอยู่ "กึ่งกลางแนวตั้ง" (บน-ล่าง) ของกล่องเสมอ */
-    align-items: center; /* จัดให้ข้อความ "ชิดซ้าย" (ถ้าอยากให้จัดกลางเป๊ะๆ เปลี่ยนเป็น center ครับ) */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     
-    text-align: center;      /* 💡 สั่งให้ตัวหนังสือจัดกลาง */
-    gap: 8px;               /* 💡 ใช้ gap ในการสร้างช่องไฟระหว่างบรรทัดแทน mb-2 (ปรับตัวเลขได้ตามความหมาะสม) */
-	
+    text-align: center;
+    gap: 8px;
+    
     color: #000;
     z-index: 10;
-    
-    /* เอาบรรทัดล่างนี้ออกตอนใช้งานจริงนะครับ (ใส่ไว้ให้เห็นขอบเขตกล่องตอนจัดหน้าจอเฉยๆ) */
-    /* border: 2px solid red; */
 }
-
-/* 💡 4.4 แยกกำหนดขนาดฟอนต์ให้แต่ละบรรทัดได้อิสระ */
+/* แยกกำหนดขนาดฟอนต์ให้แต่ละบรรทัด */
 #display-task {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: bold;
 }
-
 #display-route, #display-km {
     font-size: 26px;
     font-weight: bold;
 }
-
-/* 5. ค่ายกลไร้พ่าย (สยบปัญหา html2canvas บนมือถือ) */
+/* 5. ค่ายกลไร้พ่าย */
 #image-grid {
     position: absolute;
     top: 500px;
     left: 40px;
-    width: 720px; /* 💡 ล็อกความกว้างพื้นที่ให้เป๊ะ (800 - ซ้าย 40 - ขวา 40 = 720px) */
+    width: 720px;
     height: 550px;
     
-    display: block; /* 💡 กลับสู่สามัญ ไม่ใช้ Flex/Grid เพื่อความชัวร์ 100% */
-    font-size: 0;   /* ลบช่องว่างแฝงของระบบ */
+    display: block;
+    font-size: 0;
     text-align: center; 
     z-index: 10;
 }
-
-/* ล็อกขนาดกล่องย่อยเป็น "พิกเซล" ชัดเจน ห้ามเพี้ยน */
+/* ล็อกขนาดกล่องย่อย */
 .img-wrapper {
     display: inline-block;
-    width: 345px;  /* 💡 ล็อกความกว้างเป๊ะๆ (2 รูป = 690px เหลือที่ว่างเป็นช่องไฟ 30px พอดี) */
-    height: 255px; /* ล็อกความสูง */
-    margin: 5px;   /* ช่องไฟระหว่างรูป */
+    width: 345px;
+    height: 255px;
+    margin: 5px;
     vertical-align: top;
 }
-
 /* จัดรูปภาพให้เต็มกล่อง */
 .uploaded-img {
     width: 100%;
@@ -114,21 +102,25 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-
+/* ✅ เพิ่มการจัดเรียงรูป 2 และ 3 รูป */
+#image-grid.two-images .img-wrapper {
+    width: 48%;
+}
+#image-grid.three-images .img-wrapper {
+    width: 31%;
+}
     </style>
 </head>
 <body class="bg-gray-100 p-8 font-sans">
-
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         
-        <!-- แผงควบคุม (สำหรับกรอกข้อมูล) -->
+        <!-- แผงควบคุม -->
         <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md h-fit">
             <h2 class="text-2xl font-bold mb-6 text-blue-800">สร้างรูปรายงาน</h2>
             
             <div class="space-y-4">
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">เลือกหน่วยงาน</label>
-                    <!-- อัปเดต Value ให้ตรงกับชื่อไฟล์ภาษาอังกฤษ -->
                     <select id="unit-select" class="w-full p-2 border rounded" onchange="changeTemplate()">
                         <option value="bg-khokpho.png">หมวดทางหลวงโคกโพธิ์</option>
                         <option value="bg-nongchik.png">หมวดทางหลวงหนองจิก</option>
@@ -140,72 +132,60 @@
                         <option value="bg-plan.png">งานวางแผน</option>
                     </select>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">ชื่องาน</label>
                     <input type="text" id="task-name" class="w-full p-2 border rounded" placeholder="เช่น งานทำความสะอาดผิวทาง" onkeyup="updateText()">
                 </div>
-
-                <!-- 💡 ค่ายกล Dropdown 2 ชั้น (สายทาง & ตอน) -->
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">สายทาง (ทล.)</label>
                     <select id="route-select" class="w-full p-2 border rounded" onchange="updateSectionDropdown()">
                         <option value="">-- เลือกสายทาง --</option>
-                        <!-- ตัวเลือกจะถูกสร้างอัตโนมัติจากโค้ดด้านล่าง -->
                     </select>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">ชื่อตอน</label>
                     <select id="section-select" class="w-full p-2 border rounded" onchange="updateText()">
                         <option value="">-- กรุณาเลือกสายทางก่อน --</option>
                     </select>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">กม. ที่ดำเนินงาน</label>
                     <input type="text" id="km-text" class="w-full p-2 border rounded" placeholder="เช่น กม.106+950 - กม.108+850" onkeyup="updateText()">
                 </div>
-
                 <div>
                     <label class="block text-gray-700 font-bold mb-2">อัปโหลดรูปหน้างาน (เลือกพร้อมกัน 2-4 รูป)</label>
                     <input type="file" id="image-upload" accept="image/*" multiple class="w-full p-2 border rounded" onchange="handleImages()">
                 </div>
-
                 <button onclick="exportImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mt-4">
                     📥 จัดเก็บลงเครื่อง
                 </button>
             </div>
         </div>
-
-        <!-- พื้นที่แสดงผล (Preview) -->
+        
+        <!-- พื้นที่แสดงผล -->
 		<div id="template-wrapper" class="w-full lg:w-2/3 overflow-hidden">
 			<div id="template-container">
-				<!-- 💡 เคล็ดลับ: เพิ่ม onload ให้แอปคำนวณสัดส่วนตอนโหลดรูปเสร็จ -->
-				<img id="bg-image" src="bg-khokpho.png" alt="Background" onload="adjustScale()">
+				<img id="bg-image" src="bg-khokpho.png" alt="Background" 
+                     onload="adjustScale()"
+                     onerror="this.src='https://via.placeholder.com/800x1100/ffffff/000000?text=ไม่พบรูปภาพ'; adjustScale()">
                 
-				<!-- เลเยอร์วันที่ (แยกอิสระ ควบคุมพิกัดเอง) -->
+				<!-- เลเยอร์วันที่ -->
 				<div id="date-overlay">
 				    <p id="display-date">วันที่ -</p>
 				</div>
-
-				<!-- เลเยอร์รายละเอียดงานรวม (ตีกล่องตามกรอบสีแดง) -->
+				<!-- เลเยอร์รายละเอียดงาน -->
 				<div id="info-box-overlay">
 				    <p id="display-task">-</p>
 				    <p id="display-route">-</p>
 				    <p id="display-km">-</p>
 				</div>
-
                 <!-- เลเยอร์รูปภาพ -->
                 <div id="image-grid"></div>
-
             </div>
         </div>
-
     </div>
-
     <script>
-		// 💡 1. ฐานข้อมูลสายทาง (ดึงมาจากไฟล์ Excel ครบทั้ง 30 เส้นทาง)
+		// 💡 ฐานข้อมูลสายทาง
         const highwayData = {
             "42": ["นาจวก - ดอนยาง", "ดอนยาง - บ้านดี", "บ้านดี - ปาลัส", "ปาลัส - กอตอ"],
             "43": ["ปาแด - มะพร้าวต้นเดียว", "มะพร้าวต้นเดียว - ปูยุดบารู", "ปูยุดบารู - ตันหยงลิมอ", "ตันหยงลิมอ - บ้านดี"],
@@ -239,6 +219,7 @@
             "4359": ["ทางเข้าบางปู"]
         };
 		
+        // 💡 แสดงวันที่ปัจจุบัน
         function setTodayDate() {
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
             const today = new Date();
@@ -249,11 +230,9 @@
         }
         setTodayDate();
 
-		// 💡 3. ฟังก์ชันดึง "สายทาง" มาสร้างเป็นตัวเลือกอัตโนมัติ
+		// 💡 สร้างรายการสายทาง
         function initRouteDropdown() {
             const routeSelect = document.getElementById("route-select");
-            
-            // เช็กให้ชัวร์ว่าหากล่องเจอ ค่อยเติมข้อมูล
             if (routeSelect) {
                 for (const hw in highwayData) {
                     const option = document.createElement("option");
@@ -264,83 +243,74 @@
             }
         }
         
-        // 💡 เคล็ดวิชาแก้บั๊ก: สั่งให้รอโหลด HTML เสร็จก่อนค่อยรันฟังก์ชันนี้
-        window.addEventListener('DOMContentLoaded', initRouteDropdown);
-
-        // 💡 4. ฟังก์ชันดึง "ตอน" มาแสดงเมื่อมีการเลือกสายทาง
+        // 💡 เมื่อเลือกสายทาง → แสดงรายการตอน
         function updateSectionDropdown() {
             const route = document.getElementById("route-select").value;
             const sectionSelect = document.getElementById("section-select");
             
-            sectionSelect.innerHTML = '<option value="">-- เลือกตอน --</option>'; // ล้างค่าเก่า
-
+            sectionSelect.innerHTML = '<option value="">-- เลือกตอน --</option>';
             if (route && highwayData[route]) {
-                const sections = highwayData[route];
-                sections.forEach(function(sec) {
+                highwayData[route].forEach(function(sec) {
                     const option = document.createElement("option");
                     option.value = sec;
                     option.text = sec;
                     sectionSelect.appendChild(option);
                 });
             }
-            updateText(); 
+            updateText();
         }
-        // เปลี่ยนให้มาเปลี่ยน src ของแท็ก img แทน
+
+        // 💡 เปลี่ยนรูปพื้นหลังตามหน่วยงาน + ปรับสเกลใหม่
         function changeTemplate() {
             const selectedImage = document.getElementById('unit-select').value;
             document.getElementById('bg-image').src = selectedImage;
+            adjustScale(); // ✅ ปรับสเกลใหม่เมื่อเปลี่ยนรูป
         }
 
-        // 💡 5. อัปเดตข้อความลงบนภาพเทมเพลตแบบรัดกุม 100%        
-function updateText() {                
-    try { // ✅ เพิ่ม try ที่ขาดหายไป
-        // ดึงข้อมูลจากแผงควบคุม (เช็กความปลอดภัยก่อนดึง)                
-        let taskInput = document.getElementById('task-name');                
-        let kmInput = document.getElementById('km-text');                
-        let routeSelect = document.getElementById('route-select');                
-        let sectionSelect = document.getElementById('section-select');
-        
-        let task = taskInput ? taskInput.value : '';                
-        let km = kmInput ? kmInput.value : '';                
-        let routeVal = routeSelect ? routeSelect.value : '';                
-        let sectionVal = sectionSelect ? sectionSelect.value : '';                                
-        
-        // ประกอบร่างข้อความสายทางและตอน                
-        let routeText = 'ทางหลวงหมายเลข';                
-        if (routeVal !== '') {                    
-            routeText += ' ' + routeVal;                    
-            if (sectionVal !== '') {                        
-                routeText += ' ตอน ' + sectionVal;                    
-            }
-        } // ✅ ปิดวงเล็บปีกกา if (routeVal) ให้ตรงก่อนกำหนดค่าเริ่มต้น
-        
-        // ✅ ย้ายส่วนนี้ออกมาจากใน if เพื่อทำงานเสมอ
-        // ป้องกันกรณีไม่ได้กรอกข้อมูล ให้แสดงขีด (-) ไว้                
-        task = task || '-';                
-        km = km || '-';
+        // 💡 อัปเดตข้อความลงภาพ
+        function updateText() {                
+            try {
+                let taskInput = document.getElementById('task-name');                
+                let kmInput = document.getElementById('km-text');                
+                let routeSelect = document.getElementById('route-select');                
+                let sectionSelect = document.getElementById('section-select');
                 
-        // ✅ แก้ routeText() → เป็นข้อความธรรมดา ไม่ใช่ฟังก์ชัน
-        // อัปเดตลงไปในเทมเพลต                
-        document.getElementById('display-task').innerText = task;                
-        document.getElementById('display-route').innerText = routeText;                
-        document.getElementById('display-km').innerText = km;                            
+                let task = taskInput ? taskInput.value : '';                
+                let km = kmInput ? kmInput.value : '';                
+                let routeVal = routeSelect ? routeSelect.value : '';                
+                let sectionVal = sectionSelect ? sectionSelect.value : '';                                
+                
+                let routeText = 'ทางหลวงหมายเลข';
+                if (routeVal !== '') {                    
+                    routeText += ' ' + routeVal;                    
+                    if (sectionVal !== '') {                        
+                        routeText += ' ตอน ' + sectionVal;                    
+                    }
+                } else {
+                    routeText = '-'; // ✅ ถ้ายังไม่เลือกสายทาง แสดงขีด
+                }
+                
+                task = task || '-';                
+                km = km || '-';
+                
+                document.getElementById('display-task').innerText = task;                
+                document.getElementById('display-route').innerText = routeText;                
+                document.getElementById('display-km').innerText = km;                            
+                
+            } catch (error) {                
+                console.log("พบปัญหาการอัปเดตข้อความ:", error);		
+            }
+        }
         
-    } catch (error) {                
-        console.log("พบปัญหาการอัปเดตข้อความ:", error);		
-    }
-} // ✅ ปิดฟังก์ชันให้ครบถ้วน	
-		
+        // 💡 แสดงรูปภาพที่อัปโหลด
         function handleImages() {
             const files = document.getElementById('image-upload').files;
             const grid = document.getElementById('image-grid');
             grid.innerHTML = ''; 
             grid.className = ''; 
-
             const limit = Math.min(files.length, 4);
-
             if (limit === 3) grid.classList.add('three-images');
             if (limit === 2) grid.classList.add('two-images');
-
             for (let i = 0; i < limit; i++) {
                 const file = files[i];
                 if (file) {
@@ -361,28 +331,23 @@ function updateText() {
             }
         }
 
-        // 💡 1. ฟังก์ชันย่อส่วนให้พอดีหน้าจอมือถือ (แต่ขนาดจริงยัง 800px)
+        // 💡 ปรับย่อส่วนให้พอดีจอ
         function adjustScale() {
             const wrapper = document.getElementById('template-wrapper');
             const container = document.getElementById('template-container');
-            const wrapperWidth = wrapper.clientWidth; // ความกว้างของหน้าจอมือถือ
+            const wrapperWidth = wrapper.clientWidth;
             
             if (wrapperWidth < 800) {
                 const scale = wrapperWidth / 800;
                 container.style.transform = `scale(${scale})`;
-                // หดความสูงของกล่องคลุมตามไปด้วย จะได้ไม่เหลือพื้นที่ว่างด้านล่าง
                 wrapper.style.height = (container.offsetHeight * scale) + 'px';
             } else {
                 container.style.transform = 'none';
                 wrapper.style.height = 'auto';
             }
         }
-        
-        // สั่งให้ทำงานทุกครั้งที่หมุนจอ หรือโหลดหน้าจอ
-        window.addEventListener('load', adjustScale);
-        window.addEventListener('resize', adjustScale);
 
-        // 💡 2. อัปเดตปุ่มเซฟ ให้หลอกระบบว่าจอใหญ่ตอนแคปภาพ
+        // 💡 ส่งออกเป็นรูปภาพ
         function exportImage() {
             const container = document.getElementById('template-container');
             
@@ -390,10 +355,8 @@ function updateText() {
                 scale: 2, 
                 useCORS: true,
                 windowWidth: 800,
-                // เคล็ดวิชาลับ: คืนร่างเทมเพลตเป็น 100% ชั่วคราวเฉพาะตอนแคปภาพ!
                 onclone: function(clonedDoc) {
-                    const clonedContainer = clonedDoc.getElementById('template-container');
-                    clonedContainer.style.transform = 'none';
+                    clonedDoc.getElementById('template-container').style.transform = 'none';
                 }
             }).then(canvas => {
                 const link = document.createElement('a');
@@ -402,6 +365,14 @@ function updateText() {
                 link.click();
             });
         }
+
+        // 💡 เริ่มทำงานเมื่อโหลดหน้าเสร็จ
+        window.addEventListener('DOMContentLoaded', function() {
+            initRouteDropdown();
+            updateText(); // ✅ แสดงค่าเริ่มต้นทันที
+        });
+        window.addEventListener('load', adjustScale);
+        window.addEventListener('resize', adjustScale);
     </script>
 </body>
 </html>
