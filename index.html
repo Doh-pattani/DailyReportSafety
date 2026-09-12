@@ -245,68 +245,68 @@
             adjustScale();
         }
         function adjustFontSize(element, maxFontSize, minFontSize) {
-    if (!element) return;
+            if (!element) return;
 
-    const box = document.getElementById('info-box-overlay');
-    const maxWidth = box ? box.offsetWidth - 40 : 700; /* ✅ เผื่อขอบซ้ายขวา */
+            const box = document.getElementById('info-box-overlay');
+            const maxWidth = box ? box.offsetWidth - 40 : 700; /* ✅ เผื่อขอบซ้ายขวา */
 
-    let fontSize = maxFontSize;
-    element.style.fontSize = fontSize + 'px';
+            let fontSize = maxFontSize;
+            element.style.fontSize = fontSize + 'px';
 
-    while (element.scrollWidth > maxWidth && fontSize > minFontSize) {
-        fontSize -= 1;
-        element.style.fontSize = fontSize + 'px';
-    }
-}
-        function updateText() {                
-    try {
-        let taskInput = document.getElementById('task-name');                
-        let kmInput = document.getElementById('km-text');                
-        let routeSelect = document.getElementById('route-select');                
-        let sectionSelect = document.getElementById('section-select');
-
-        let task = taskInput ? taskInput.value : '';                
-        let km = kmInput ? kmInput.value : '';                
-        let routeVal = routeSelect ? routeSelect.value : '';                
-        let sectionVal = sectionSelect ? sectionSelect.value : '';                                
-        let routeText = 'ทางหลวงหมายเลข';
-
-        if (routeVal !== '') {                    
-            routeText += ' ' + routeVal;                    
-            if (sectionVal !== '') {                        
-                routeText += ' ตอน ' + sectionVal;                    
+            while (element.scrollWidth > maxWidth && fontSize > minFontSize) {
+                fontSize -= 1;
+                element.style.fontSize = fontSize + 'px';
             }
-        } else {
-            routeText = '-';
         }
+        function updateText() {                
+            try {
+                let taskInput = document.getElementById('task-name');                
+                let kmInput = document.getElementById('km-text');                
+                let routeSelect = document.getElementById('route-select');                
+                let sectionSelect = document.getElementById('section-select');
 
-        task = task || '-';                
-        km = km || '-';
+                let task = taskInput ? taskInput.value : '';                
+                let km = kmInput ? kmInput.value : '';                
+                let routeVal = routeSelect ? routeSelect.value : '';                
+                let sectionVal = sectionSelect ? sectionSelect.value : '';                                
+                let routeText = 'ทางหลวงหมายเลข';
 
-        const elTask = document.getElementById('display-task');
-        const elRoute = document.getElementById('display-route');
-        const elKm = document.getElementById('display-km');
+                if (routeVal !== '') {                    
+                    routeText += ' ' + routeVal;                    
+                    if (sectionVal !== '') {                        
+                        routeText += ' ตอน ' + sectionVal;                    
+                    }
+                } else {
+                    routeText = '-';
+                }
 
-        elTask.innerText = task;                
-        elRoute.innerText = routeText;                
-        elKm.innerText = km;
+                task = task || '-';                
+                km = km || '-';
 
-        // จัดขนาดฟอนต์อัตโนมัติ
-        adjustFontSize(elTask, 30, 24);
-        adjustFontSize(elRoute, 26, 20);
-        adjustFontSize(elKm, 28, 22);
+                const elTask = document.getElementById('display-task');
+                const elRoute = document.getElementById('display-route');
+                const elKm = document.getElementById('display-km');
 
-        // บังคับวางขนาดฟอนต์อีกครั้ง หลัง DOM อัปเดต
-        setTimeout(() => {
-            adjustFontSize(elTask, 30, 24);
-            adjustFontSize(elRoute, 26, 20);
-            adjustFontSize(elKm, 28, 22);
-        }, 50);
+                elTask.innerText = task;                
+                elRoute.innerText = routeText;                
+                elKm.innerText = km;
 
-    } catch (error) {                
-        console.log("พบปัญหาการอัปเดตข้อความ:", error);		
-    }
-}
+                // จัดขนาดฟอนต์อัตโนมัติ
+                adjustFontSize(elTask, 30, 24);
+                adjustFontSize(elRoute, 26, 20);
+                adjustFontSize(elKm, 28, 22);
+
+                // บังคับวางขนาดฟอนต์อีกครั้ง หลัง DOM อัปเดต
+                setTimeout(() => {
+                    adjustFontSize(elTask, 30, 24);
+                    adjustFontSize(elRoute, 26, 20);
+                    adjustFontSize(elKm, 28, 22);
+                }, 50);
+
+            } catch (error) {                
+                console.log("พบปัญหาการอัปเดตข้อความ:", error);		
+            }
+        }
         function handleImages() {
             const files = document.getElementById('image-upload').files;
             const grid = document.getElementById('image-grid');
@@ -345,71 +345,129 @@
                 wrapper.style.height = 'auto';
             }
         }
+        
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
         async function exportImage() {
-    const container = document.getElementById('template-container');
-    
-    // ✅ รอฟอนต์โหลดเสร็จก่อนแคป — สำคัญ!
-    if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
-        await new Promise(resolve => setTimeout(resolve, 500)); // รอเพิ่มอีกนิด
-    }
-    
-    html2canvas(container, {
-        scale: window.devicePixelRatio || 2,
-        useCORS: true,
-        allowTaint: false,
-        logging: false,
-        letterRendering: true, 
-        windowWidth: 800,
-        onclone: function(clonedDoc) {
-            const clonedContainer = clonedDoc.getElementById('template-container');
-            const clonedDate = clonedDoc.getElementById('date-overlay');
-            // เราไม่จำเป็นต้องดึง clonedRoute กับ clonedKm มาตั้งค่าใหม่แล้ว ให้ใช้ค่าที่แสดงบนหน้าจอได้เลย
-
-            clonedContainer.style.transform = 'none';
-            clonedDate.style.fontSize = '32px';
-            clonedDate.style.top = '130px';
-            clonedDate.style.left = '0';
-            clonedDate.style.width = '100%';
-            clonedDate.style.height = '44px';
-            clonedDate.style.display = 'flex';
-            clonedDate.style.justifyContent = 'center';
-            clonedDate.style.alignItems = 'center';
-            clonedDate.style.transform = 'none';
-
-            // ❌ ลบการตั้งค่า clonedRoute และ clonedKm ตรงนี้ออกทั้งหมด
-            // เพื่อให้มันใช้ขนาดฟอนต์ที่ถูกคำนวณย่อมาแล้ว และใช้ overflow: hidden ที่เขียนไว้ใน CSS
-        }
-    }).then(canvas => {
-        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-        const link = document.createElement('a');
-        link.download = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH')}.jpg`;
-        if (isIOS) {
-            const newTab = window.open();
-            if (newTab) {
-                newTab.document.write(`
-                <html>
-                <body style="margin:0;display:flex;justify-content:center;background:#000;">
-                    <img src="${imageDataUrl}" style="max-width:100%;height:auto;" />
-                    <script>
-                        document.body.onload = setTimeout(() => {
-                            alert('✅ กดค้างที่ภาพ → เลือก "บันทึกในรูปภาพ"');
-                        }, 500);
-                    <\/script>
-                </body>
-                </html>`);
-                newTab.document.close();
-            } else {
-                alert('⚠️ กรุณาอนุญาตหน้าต่างป๊อปอัพ แล้วลองใหม่อีกครั้ง');
+            const container = document.getElementById('template-container');
+            
+            // ✅ รอฟอนต์โหลดเสร็จก่อนแคป — สำคัญ!
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+                await new Promise(resolve => setTimeout(resolve, 500)); // รอเพิ่มอีกนิด
             }
-        } else {
-            link.href = imageDataUrl;
-            link.click();
+            
+            html2canvas(container, {
+                scale: window.devicePixelRatio || 2,
+                useCORS: true,
+                allowTaint: false,
+                logging: false,
+                letterRendering: true, 
+                windowWidth: 800,
+                onclone: function(clonedDoc) {
+                    const clonedContainer = clonedDoc.getElementById('template-container');
+                    const clonedDate = clonedDoc.getElementById('date-overlay');
+
+                    clonedContainer.style.transform = 'none';
+                    clonedDate.style.fontSize = '32px';
+                    clonedDate.style.top = '130px';
+                    clonedDate.style.left = '0';
+                    clonedDate.style.width = '100%';
+                    clonedDate.style.height = '44px';
+                    clonedDate.style.display = 'flex';
+                    clonedDate.style.justifyContent = 'center';
+                    clonedDate.style.alignItems = 'center';
+                    clonedDate.style.transform = 'none';
+                }
+            }).then(canvas => {
+                // เปลี่ยนมาใช้ toBlob เพื่อรองรับ Web Share API บนมือถือ
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return;
+                    const fileName = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.jpg`;
+                    
+                    // 1. ลองใช้ Web Share API (วิธีที่ดีที่สุดสำหรับ iOS/Android) จะเด้งเมนูให้กด "บันทึกภาพ" ได้เลย
+                    if (navigator.share) {
+                        const file = new File([blob], fileName, { type: 'image/jpeg' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share({
+                                    files: [file],
+                                    title: 'บันทึกรูปรายงาน'
+                                });
+                                return; // ถ้าแชร์/บันทึกสำเร็จ ให้ออกจากฟังก์ชันเลย
+                            } catch (error) {
+                                console.log('ผู้ใช้ยกเลิกการแชร์ หรือ Share API ล้มเหลว:', error);
+                            }
+                        }
+                    }
+
+                    // 2. วิธีสำรอง (Fallback)
+                    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                    
+                    if (isIOS) {
+                        // สำหรับ iPhone ถ้า Share API ล้มเหลว ให้เปิดรูปโชว์บนหน้าเว็บ (หลบการบล็อก Pop-up)
+                        showIOSModal(imageDataUrl);
+                    } else {
+                        // สำหรับ Android / PC ดาวน์โหลดลงเครื่องตามปกติ
+                        const link = document.createElement('a');
+                        link.download = fileName;
+                        link.href = imageDataUrl;
+                        link.click();
+                    }
+                }, 'image/jpeg', 0.95);
+            });
         }
-    });
-}
+
+        // ==========================================
+        // ฟังก์ชันใหม่: สร้างหน้าต่างโชว์รูปให้ iPhone แตะค้างเพื่อเซฟ
+        // ==========================================
+        function showIOSModal(imgSrc) {
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
+            overlay.style.zIndex = '9999';
+            overlay.style.display = 'flex';
+            overlay.style.flexDirection = 'column';
+            overlay.style.justifyContent = 'center';
+            overlay.style.alignItems = 'center';
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'ปิดหน้าต่าง (X)';
+            closeBtn.style.padding = '10px 20px';
+            closeBtn.style.marginBottom = '15px';
+            closeBtn.style.backgroundColor = '#dc2626'; // สีแดงสไตล์ Tailwind
+            closeBtn.style.color = 'white';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '5px';
+            closeBtn.style.fontSize = '18px';
+            closeBtn.style.fontWeight = 'bold';
+            closeBtn.onclick = () => document.body.removeChild(overlay);
+            
+            const helpText = document.createElement('p');
+            helpText.innerText = '✅ แตะค้างที่ภาพด้านล่างนี้ แล้วเลือก "บันทึกในแอปรูปภาพ"';
+            helpText.style.color = 'white';
+            helpText.style.marginBottom = '15px';
+            helpText.style.fontSize = '18px';
+            helpText.style.textAlign = 'center';
+            
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            img.style.maxWidth = '90%';
+            img.style.maxHeight = '70%';
+            img.style.border = '2px solid white';
+            img.style.borderRadius = '8px';
+            
+            overlay.appendChild(closeBtn);
+            overlay.appendChild(helpText);
+            overlay.appendChild(img);
+            
+            document.body.appendChild(overlay);
+        }
+
         window.addEventListener('DOMContentLoaded', function() {
             initRouteDropdown();
             updateText();
