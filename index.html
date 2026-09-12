@@ -238,7 +238,7 @@
             document.getElementById('bg-image').src = selectedImage;
             adjustScale();
         }
-        function adjustFontSize(element, maxFontSize, minFontSize) {
+        function ize(element, maxFontSize, minFontSize) {
             if (!element) return;
             const containerWidth = element.offsetWidth - 10;
             let fontSize = maxFontSize;
@@ -275,7 +275,7 @@
                 elTask.innerText = task;                
                 elRoute.innerText = routeText;                
                 elKm.innerText = km;                            
-                adjustFontSize(elRoute, 28, 16);
+                adjustFontSize(elRoute, 28, 18);
             } catch (error) {                
                 console.log("พบปัญหาการอัปเดตข้อความ:", error);		
             }
