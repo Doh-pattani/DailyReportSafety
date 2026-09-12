@@ -45,22 +45,22 @@
     position: absolute;
     top: 265px;
     left: -5px;
-    width: 620px;       /* ✅ ลดความกว้างลงจาก 740px เป็น 620px */
-    height: 170px;       /* ✅ ลดความสูงลง ไม่ให้ทับหัวหน้า */
+    width: 620px;
+    height: 170px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 10px;            /* ✅ ลดช่องว่างบรรทัดลง */
+    gap: 10px;
     color: #000;
     z-index: 10;
 }
 #display-task {
     font-size: 30px;
     font-weight: 700;
-    line-height: 1.4;       /* ✅ เพิ่มความสูงบรรทัด */
-    padding-bottom: 8px;    /* ✅ เพิ่มพื้นที่กันสระล่างหาย */
+    line-height: 1.4;
+    padding-bottom: 8px;
 }
 #display-route, #display-km {
     font-size: 26px;
@@ -70,8 +70,8 @@
     overflow: hidden;       
     text-overflow: ellipsis; 
     letter-spacing: 0.5px;  
-    line-height: 1.4;       /* ✅ เพิ่มความสูงบรรทัด */
-    padding-bottom: 8px;    /* ✅ เพิ่มพื้นที่กันสระล่างหาย */
+    line-height: 1.4;
+    padding-bottom: 8px;
 }
 #image-grid {
     position: absolute;
@@ -151,12 +151,11 @@
                     <input type="file" id="image-upload" accept="image/*" multiple class="w-full p-2 border rounded" onchange="handleImages()">
                 </div>
                 <button onclick="exportImage()" class="w-full bg-[#06C755] hover:bg-[#05a346] text-white font-bold py-3 px-4 rounded mt-4 flex justify-center items-center gap-2 transition-colors duration-200 shadow-sm">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
-        <path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.122.292.078.749.037 1.031l-.105.744c-.032.223-.153.725.642.392.795-.333 4.298-2.531 5.864-4.321C22.029 16.038 24 13.376 24 10.304zm-15.545 2.129H6.012c-.22 0-.399-.178-.399-.398V8.121c0-.221.179-.399.399-.399h2.443c.22 0 .399.178.399.399v1.077c0 .221-.179.399-.399.399H6.771v1.545h1.684c.22 0 .399.178.399.399v1.092c0 .22-.179.399-.399.399zm3.567 0h-1.076c-.22 0-.399-.178-.399-.398V8.121c0-.221.179-.399.399-.399h1.076c.22 0 .399.178.399.399v3.914c0 .22-.179.399-.399.399zm4.019 0h-1.196c-.198 0-.363-.146-.391-.341l-.946-3.212v3.155c0 .22-.179.399-.399.399h-1.076c-.22 0-.399-.178-.399-.398V8.121c0-.221.179-.399.399-.399h1.196c.198 0 .363.146.391.34l.947 3.213V8.121c0-.221.179-.399.399-.399h1.076c.22 0 .399.178.399.399v3.914c0 .22-.179.399-.399.399zm3.568-1.492h-1.685v-1.091h1.685c.22 0 .399-.179.399-.399v-1.077c0-.221-.179-.399-.399-.399H18.41c-.22 0-.399.178-.399.399v3.914c0 .221.179.399.399.399h2.442c.22 0 .399-.178.399-.399v-1.077c0-.22-.179-.398-.399-.398z"/>
-    </svg>
-    แชร์รูปนี้ลงกลุ่ม Line
-</button>
-
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 24px; height: 24px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z" />
+                    </svg>
+                    แชร์รูปนี้ลงกลุ่ม Line
+                </button>
             </div>
         </div>
 		<div id="template-wrapper" class="w-full lg:w-2/3 overflow-hidden">
@@ -252,7 +251,7 @@
             if (!element) return;
 
             const box = document.getElementById('info-box-overlay');
-            const maxWidth = box ? box.offsetWidth - 40 : 700; /* ✅ เผื่อขอบซ้ายขวา */
+            const maxWidth = box ? box.offsetWidth - 40 : 700;
 
             let fontSize = maxFontSize;
             element.style.fontSize = fontSize + 'px';
@@ -295,12 +294,10 @@
                 elRoute.innerText = routeText;                
                 elKm.innerText = km;
 
-                // จัดขนาดฟอนต์อัตโนมัติ
                 adjustFontSize(elTask, 30, 24);
                 adjustFontSize(elRoute, 26, 20);
                 adjustFontSize(elKm, 28, 22);
 
-                // บังคับวางขนาดฟอนต์อีกครั้ง หลัง DOM อัปเดต
                 setTimeout(() => {
                     adjustFontSize(elTask, 30, 24);
                     adjustFontSize(elRoute, 26, 20);
@@ -350,15 +347,12 @@
             }
         }
         
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        
         async function exportImage() {
             const container = document.getElementById('template-container');
             
-            // ✅ รอฟอนต์โหลดเสร็จก่อนแคป — สำคัญ!
             if (document.fonts && document.fonts.ready) {
                 await document.fonts.ready;
-                await new Promise(resolve => setTimeout(resolve, 500)); // รอเพิ่มอีกนิด
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
             
             html2canvas(container, {
@@ -384,12 +378,10 @@
                     clonedDate.style.transform = 'none';
                 }
             }).then(canvas => {
-                // เปลี่ยนมาใช้ toBlob เพื่อรองรับ Web Share API บนมือถือ
                 canvas.toBlob(async (blob) => {
                     if (!blob) return;
                     const fileName = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.jpg`;
                     
-                    // 1. ลองใช้ Web Share API (วิธีที่ดีที่สุดสำหรับ iOS/Android) จะเด้งเมนูให้กด "บันทึกภาพ" ได้เลย
                     if (navigator.share) {
                         const file = new File([blob], fileName, { type: 'image/jpeg' });
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -398,78 +390,21 @@
                                     files: [file],
                                     title: 'บันทึกรูปรายงาน'
                                 });
-                                return; // ถ้าแชร์/บันทึกสำเร็จ ให้ออกจากฟังก์ชันเลย
+                                return;
                             } catch (error) {
                                 console.log('ผู้ใช้ยกเลิกการแชร์ หรือ Share API ล้มเหลว:', error);
                             }
                         }
                     }
 
-                    // 2. วิธีสำรอง (Fallback)
                     const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = imageDataUrl;
+                    link.click();
                     
-                    if (isIOS) {
-                        // สำหรับ iPhone ถ้า Share API ล้มเหลว ให้เปิดรูปโชว์บนหน้าเว็บ (หลบการบล็อก Pop-up)
-                        showIOSModal(imageDataUrl);
-                    } else {
-                        // สำหรับ Android / PC ดาวน์โหลดลงเครื่องตามปกติ
-                        const link = document.createElement('a');
-                        link.download = fileName;
-                        link.href = imageDataUrl;
-                        link.click();
-                    }
                 }, 'image/jpeg', 0.95);
             });
-        }
-
-        // ==========================================
-        // ฟังก์ชันใหม่: สร้างหน้าต่างโชว์รูปให้ iPhone แตะค้างเพื่อเซฟ
-        // ==========================================
-        function showIOSModal(imgSrc) {
-            const overlay = document.createElement('div');
-            overlay.style.position = 'fixed';
-            overlay.style.top = '0';
-            overlay.style.left = '0';
-            overlay.style.width = '100vw';
-            overlay.style.height = '100vh';
-            overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
-            overlay.style.zIndex = '9999';
-            overlay.style.display = 'flex';
-            overlay.style.flexDirection = 'column';
-            overlay.style.justifyContent = 'center';
-            overlay.style.alignItems = 'center';
-            
-            const closeBtn = document.createElement('button');
-            closeBtn.innerText = 'ปิดหน้าต่าง (X)';
-            closeBtn.style.padding = '10px 20px';
-            closeBtn.style.marginBottom = '15px';
-            closeBtn.style.backgroundColor = '#dc2626'; // สีแดงสไตล์ Tailwind
-            closeBtn.style.color = 'white';
-            closeBtn.style.border = 'none';
-            closeBtn.style.borderRadius = '5px';
-            closeBtn.style.fontSize = '18px';
-            closeBtn.style.fontWeight = 'bold';
-            closeBtn.onclick = () => document.body.removeChild(overlay);
-            
-            const helpText = document.createElement('p');
-            helpText.innerText = '✅ แตะค้างที่ภาพด้านล่างนี้ แล้วเลือก "บันทึกในแอปรูปภาพ"';
-            helpText.style.color = 'white';
-            helpText.style.marginBottom = '15px';
-            helpText.style.fontSize = '18px';
-            helpText.style.textAlign = 'center';
-            
-            const img = document.createElement('img');
-            img.src = imgSrc;
-            img.style.maxWidth = '90%';
-            img.style.maxHeight = '70%';
-            img.style.border = '2px solid white';
-            img.style.borderRadius = '8px';
-            
-            overlay.appendChild(closeBtn);
-            overlay.appendChild(helpText);
-            overlay.appendChild(img);
-            
-            document.body.appendChild(overlay);
         }
 
         window.addEventListener('DOMContentLoaded', function() {
