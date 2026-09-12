@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบรายงานประจำวัน - ทางหลวงปลอดภัย ขับขี่สบายตา</title>
+	<!-- ✅ ใช้ Sarabun เหมือนเดิม -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -11,7 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
 	* {
-        font-family: 'Sarabun', sans-serif !important;
+        font-family: 'Sarabun', sans-serif !important; /* ✅ คง Sarabun */
     }
 #template-container {
     width: 800px;
@@ -37,7 +38,7 @@
     align-items: center;
     text-align: center;
     font-size: 32px;
-    font-weight: bold;
+    font-weight: 700;
     color: #000;
     z-index: 10;
 }
@@ -45,27 +46,29 @@
     position: absolute;
     top: 250px;
     left: 20px;
-    width: 600px;
+    width: 740px;
     height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 8px;
+    gap: 10px;
     color: #000;
     z-index: 10;
 }
 #display-task {
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 30px;
+    font-weight: 700;
 }
 #display-route, #display-km {
-    font-size: 26px;
-    font-weight: bold;
+    font-size: 28px;
+    font-weight: 700;
     white-space: nowrap;
     width: 100%;
-    overflow: hidden;
+    overflow: visible; /* ✅ ไม่ตัดขอบ ป้องกันสระหาย */
+    letter-spacing: 0.5px; /* ✅ เพิ่มระยะห่าง ป้องกันสระทับตัวอักษร */
+    font-display: swap; /* ✅ บังคับโหลดฟอนต์ก่อนแสดง */
 }
 #image-grid {
     position: absolute;
@@ -238,9 +241,9 @@
             document.getElementById('bg-image').src = selectedImage;
             adjustScale();
         }
-        function ize(element, maxFontSize, minFontSize) {
+        function adjustFontSize(element, maxFontSize, minFontSize) {
             if (!element) return;
-            const containerWidth = element.offsetWidth - 10;
+            const containerWidth = element.offsetWidth - 20;
             let fontSize = maxFontSize;
             element.style.fontSize = fontSize + 'px';
             while (element.scrollWidth > containerWidth && fontSize > minFontSize) {
@@ -275,7 +278,7 @@
                 elTask.innerText = task;                
                 elRoute.innerText = routeText;                
                 elKm.innerText = km;                            
-                adjustFontSize(elRoute, 26, 16);
+                adjustFontSize(elRoute, 28, 20);
             } catch (error) {                
                 console.log("พบปัญหาการอัปเดตข้อความ:", error);		
             }
@@ -319,17 +322,30 @@
             }
         }
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        function exportImage() {
+        
+        // ✅ วิธีแคปภาพแบบใหม่ — รอฟอนต์โหลดเสร็จก่อนแปลง ป้องกันสระหาย
+        async function exportImage() {
             const container = document.getElementById('template-container');
+            
+            // ✅ รอให้ฟอนต์ Sarabun โหลดและเรนเดอร์ครบก่อนแคป — สำคัญที่สุด!
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+                await new Promise(resolve => setTimeout(resolve, 300)); // รอเพิ่มอีกนิด ให้แน่ใจ
+            }
+            
             html2canvas(container, {
                 scale: window.devicePixelRatio || 2,
                 useCORS: true,
                 allowTaint: false,
                 logging: false,
+                letterRendering: true, /* ✅ บังคับวาดทีละตัวอักษร — สระไม่หาย */
+                foreignObjectRendering: true, /* ✅ ใช้เรนเดอร์มาตรฐาน — ปัญหาฟอนต์ลดลง */
                 windowWidth: 800,
                 onclone: function(clonedDoc) {
                     const clonedContainer = clonedDoc.getElementById('template-container');
                     const clonedDate = clonedDoc.getElementById('date-overlay');
+                    const clonedRoute = clonedDoc.getElementById('display-route');
+                    const clonedKm = clonedDoc.getElementById('display-km');
                     clonedContainer.style.transform = 'none';
                     clonedDate.style.fontSize = '32px';
                     clonedDate.style.top = '130px';
@@ -340,9 +356,17 @@
                     clonedDate.style.justifyContent = 'center';
                     clonedDate.style.alignItems = 'center';
                     clonedDate.style.transform = 'none';
+                    // ✅ บังคับฟอนต์ Sarabun ก่อนแคป
+                    clonedRoute.style.fontFamily = "'Sarabun', sans-serif";
+                    clonedRoute.style.fontSize = '28px';
+                    clonedRoute.style.letterSpacing = '0.5px';
+                    clonedRoute.style.overflow = 'visible';
+                    clonedKm.style.fontFamily = "'Sarabun', sans-serif";
+                    clonedKm.style.fontSize = '28px';
+                    clonedKm.style.overflow = 'visible';
                 }
             }).then(canvas => {
-                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
                 const link = document.createElement('a');
                 link.download = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH')}.jpg`;
                 if (isIOS) {
