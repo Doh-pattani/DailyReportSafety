@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบรายงานประจำวัน - ทางหลวงปลอดภัย ขับขี่สบายตา</title>
-	<!-- ✅ ใช้ Sarabun เหมือนเดิม -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -12,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
 	* {
-        font-family: 'Sarabun', sans-serif !important; /* ✅ คง Sarabun */
+        font-family: 'Sarabun', sans-serif !important;
     }
 #template-container {
     width: 800px;
@@ -66,9 +65,8 @@
     font-weight: 700;
     white-space: nowrap;
     width: 100%;
-    overflow: visible; /* ✅ ไม่ตัดขอบ ป้องกันสระหาย */
-    letter-spacing: 0.5px; /* ✅ เพิ่มระยะห่าง ป้องกันสระทับตัวอักษร */
-    font-display: swap; /* ✅ บังคับโหลดฟอนต์ก่อนแสดง */
+    overflow: visible;
+    letter-spacing: 0.7px; /* ✅ เพิ่มช่องว่างอีกนิด ป้องกันสระทับ */
 }
 #image-grid {
     position: absolute;
@@ -323,14 +321,13 @@
         }
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
-        // ✅ วิธีแคปภาพแบบใหม่ — รอฟอนต์โหลดเสร็จก่อนแปลง ป้องกันสระหาย
         async function exportImage() {
             const container = document.getElementById('template-container');
             
-            // ✅ รอให้ฟอนต์ Sarabun โหลดและเรนเดอร์ครบก่อนแคป — สำคัญที่สุด!
+            // ✅ รอฟอนต์โหลดเสร็จก่อนแคป — สำคัญ!
             if (document.fonts && document.fonts.ready) {
                 await document.fonts.ready;
-                await new Promise(resolve => setTimeout(resolve, 300)); // รอเพิ่มอีกนิด ให้แน่ใจ
+                await new Promise(resolve => setTimeout(resolve, 500)); // รอเพิ่มอีกนิด
             }
             
             html2canvas(container, {
@@ -338,8 +335,8 @@
                 useCORS: true,
                 allowTaint: false,
                 logging: false,
-                letterRendering: true, /* ✅ บังคับวาดทีละตัวอักษร — สระไม่หาย */
-                foreignObjectRendering: true, /* ✅ ใช้เรนเดอร์มาตรฐาน — ปัญหาฟอนต์ลดลง */
+                letterRendering: true, /* ✅ วาดทีละตัวอักษร ป้องกันสระหาย */
+                // ❌ ลบ foreignObjectRendering ออก → สาเหตุภาพดำ!
                 windowWidth: 800,
                 onclone: function(clonedDoc) {
                     const clonedContainer = clonedDoc.getElementById('template-container');
@@ -356,10 +353,9 @@
                     clonedDate.style.justifyContent = 'center';
                     clonedDate.style.alignItems = 'center';
                     clonedDate.style.transform = 'none';
-                    // ✅ บังคับฟอนต์ Sarabun ก่อนแคป
                     clonedRoute.style.fontFamily = "'Sarabun', sans-serif";
                     clonedRoute.style.fontSize = '28px';
-                    clonedRoute.style.letterSpacing = '0.5px';
+                    clonedRoute.style.letterSpacing = '0.7px';
                     clonedRoute.style.overflow = 'visible';
                     clonedKm.style.fontFamily = "'Sarabun', sans-serif";
                     clonedKm.style.fontSize = '28px';
