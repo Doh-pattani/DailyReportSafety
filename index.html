@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบรายงานประจำวัน - ทางหลวงปลอดภัย ขับขี่สบายตา</title>
+    <title>แอพรายงานประจำวัน - ทางหลวงปลอดภัย ขับขี่สบายตา V 2.0</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
@@ -150,9 +150,13 @@
                     <label class="block text-gray-700 font-bold mb-2">อัปโหลดรูปหน้างาน (เลือกพร้อมกัน 2-4 รูป)</label>
                     <input type="file" id="image-upload" accept="image/*" multiple class="w-full p-2 border rounded" onchange="handleImages()">
                 </div>
-                <button onclick="exportImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mt-4">
-                    📥 จัดเก็บลงเครื่อง
-                </button>
+                <button onclick="exportImage()" class="w-full bg-[#06C755] hover:bg-[#05a346] text-white font-bold py-3 px-4 rounded mt-4 flex justify-center items-center gap-2 transition-colors duration-200 shadow-sm">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+        <path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.122.292.078.749.037 1.031l-.105.744c-.032.223-.153.725.642.392.795-.333 4.298-2.531 5.864-4.321C22.029 16.038 24 13.376 24 10.304zm-15.545 2.129H6.012c-.22 0-.399-.178-.399-.398V8.121c0-.221.179-.399.399-.399h2.443c.22 0 .399.178.399.399v1.077c0 .221-.179.399-.399.399H6.771v1.545h1.684c.22 0 .399.178.399.399v1.092c0 .22-.179.399-.399.399zm3.567 0h-1.076c-.22 0-.399-.178-.399-.398V8.121c0-.221.179-.399.399-.399h1.076c.22 0 .399.178.399.399v3.914c0 .22-.179.399-.399.399zm4.019 0h-1.196c-.198 0-.363-.146-.391-.341l-.946-3.212v3.155c0 .22-.179.399-.399.399h-1.076c-.22 0-.399-.178-.399-.398V8.121c0-.221.179-.399.399-.399h1.196c.198 0 .363.146.391.34l.947 3.213V8.121c0-.221.179-.399.399-.399h1.076c.22 0 .399.178.399.399v3.914c0 .22-.179.399-.399.399zm3.568-1.492h-1.685v-1.091h1.685c.22 0 .399-.179.399-.399v-1.077c0-.221-.179-.399-.399-.399H18.41c-.22 0-.399.178-.399.399v3.914c0 .221.179.399.399.399h2.442c.22 0 .399-.178.399-.399v-1.077c0-.22-.179-.398-.399-.398z"/>
+    </svg>
+    แชร์รูปนี้ลงกลุ่ม Line
+</button>
+
             </div>
         </div>
 		<div id="template-wrapper" class="w-full lg:w-2/3 overflow-hidden">
