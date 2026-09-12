@@ -255,38 +255,54 @@
     }
 }
         function updateText() {                
-            try {
-                let taskInput = document.getElementById('task-name');                
-                let kmInput = document.getElementById('km-text');                
-                let routeSelect = document.getElementById('route-select');                
-                let sectionSelect = document.getElementById('section-select');
-                let task = taskInput ? taskInput.value : '';                
-                let km = kmInput ? kmInput.value : '';                
-                let routeVal = routeSelect ? routeSelect.value : '';                
-                let sectionVal = sectionSelect ? sectionSelect.value : '';                                
-                let routeText = 'ทางหลวงหมายเลข';
-                if (routeVal !== '') {                    
-                    routeText += ' ' + routeVal;                    
-                    if (sectionVal !== '') {                        
-                        routeText += ' ตอน ' + sectionVal;                    
-                    }
-                } else {
-                    routeText = '-';
-                }
-                task = task || '-';                
-                km = km || '-';
-                const elTask = document.getElementById('display-task');
-                const elRoute = document.getElementById('display-route');
-                const elKm = document.getElementById('display-km');
-                elTask.innerText = task;                
-                elRoute.innerText = routeText;                
-                elKm.innerText = km;                            
-                adjustFontSize(elRoute, 26, 20); /* ✅ ขั้นต่ำ 22 ไม่ให้เล็กเกินไป */
-				adjustFontSize(elKm, 26, 20);   /* ✅ เพิ่มบรรทัดนี้ด้วย */
-            } catch (error) {                
-                console.log("พบปัญหาการอัปเดตข้อความ:", error);		
+    try {
+        let taskInput = document.getElementById('task-name');                
+        let kmInput = document.getElementById('km-text');                
+        let routeSelect = document.getElementById('route-select');                
+        let sectionSelect = document.getElementById('section-select');
+
+        let task = taskInput ? taskInput.value : '';                
+        let km = kmInput ? kmInput.value : '';                
+        let routeVal = routeSelect ? routeSelect.value : '';                
+        let sectionVal = sectionSelect ? sectionSelect.value : '';                                
+        let routeText = 'ทางหลวงหมายเลข';
+
+        if (routeVal !== '') {                    
+            routeText += ' ' + routeVal;                    
+            if (sectionVal !== '') {                        
+                routeText += ' ตอน ' + sectionVal;                    
             }
+        } else {
+            routeText = '-';
         }
+
+        task = task || '-';                
+        km = km || '-';
+
+        const elTask = document.getElementById('display-task');
+        const elRoute = document.getElementById('display-route');
+        const elKm = document.getElementById('display-km');
+
+        elTask.innerText = task;                
+        elRoute.innerText = routeText;                
+        elKm.innerText = km;
+
+        // จัดขนาดฟอนต์อัตโนมัติ
+        adjustFontSize(elTask, 30, 24);
+        adjustFontSize(elRoute, 28, 22);
+        adjustFontSize(elKm, 28, 22);
+
+        // บังคับวางขนาดฟอนต์อีกครั้ง หลัง DOM อัปเดต
+        setTimeout(() => {
+            adjustFontSize(elTask, 30, 24);
+            adjustFontSize(elRoute, 28, 22);
+            adjustFontSize(elKm, 28, 22);
+        }, 50);
+
+    } catch (error) {                
+        console.log("พบปัญหาการอัปเดตข้อความ:", error);		
+    }
+}
         function handleImages() {
             const files = document.getElementById('image-upload').files;
             const grid = document.getElementById('image-grid');
