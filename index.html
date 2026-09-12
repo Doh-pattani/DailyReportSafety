@@ -65,8 +65,9 @@
     font-weight: 700;
     white-space: nowrap;
     width: 100%;
-    overflow: visible;
-    letter-spacing: 0.7px; /* ✅ เพิ่มช่องว่างอีกนิด ป้องกันสระทับ */
+    overflow: hidden;       /* ✅ ป้องกันข้อความล้นกล่อง */
+    text-overflow: ellipsis; /* ✅ ถ้ายาวเกินจะมี ... ไม่ล้น */
+    letter-spacing: 0.5px;  /* ✅ ลดช่องว่างเล็กน้อย */
 }
 #image-grid {
     position: absolute;
@@ -240,15 +241,19 @@
             adjustScale();
         }
         function adjustFontSize(element, maxFontSize, minFontSize) {
-            if (!element) return;
-            const containerWidth = element.offsetWidth - 20;
-            let fontSize = maxFontSize;
-            element.style.fontSize = fontSize + 'px';
-            while (element.scrollWidth > containerWidth && fontSize > minFontSize) {
-                fontSize -= 1;
-                element.style.fontSize = fontSize + 'px';
-            }
-        }
+    if (!element) return;
+
+    const box = document.getElementById('info-box-overlay');
+    const maxWidth = box ? box.offsetWidth - 40 : 700; /* ✅ เผื่อขอบซ้ายขวา */
+
+    let fontSize = maxFontSize;
+    element.style.fontSize = fontSize + 'px';
+
+    while (element.scrollWidth > maxWidth && fontSize > minFontSize) {
+        fontSize -= 1;
+        element.style.fontSize = fontSize + 'px';
+    }
+}
         function updateText() {                
             try {
                 let taskInput = document.getElementById('task-name');                
@@ -276,7 +281,8 @@
                 elTask.innerText = task;                
                 elRoute.innerText = routeText;                
                 elKm.innerText = km;                            
-                adjustFontSize(elRoute, 28, 20);
+                adjustFontSize(elRoute, 28, 22); /* ✅ ขั้นต่ำ 22 ไม่ให้เล็กเกินไป */
+				adjustFontSize(elKm, 28, 22);   /* ✅ เพิ่มบรรทัดนี้ด้วย */
             } catch (error) {                
                 console.log("พบปัญหาการอัปเดตข้อความ:", error);		
             }
