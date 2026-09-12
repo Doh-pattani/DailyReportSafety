@@ -344,73 +344,68 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
         async function exportImage() {
-            const container = document.getElementById('template-container');
-            
-            // ✅ รอฟอนต์โหลดเสร็จก่อนแคป — สำคัญ!
-            if (document.fonts && document.fonts.ready) {
-                await document.fonts.ready;
-                await new Promise(resolve => setTimeout(resolve, 500)); // รอเพิ่มอีกนิด
-            }
-            
-            html2canvas(container, {
-                scale: window.devicePixelRatio || 2,
-                useCORS: true,
-                allowTaint: false,
-                logging: false,
-                letterRendering: true, /* ✅ วาดทีละตัวอักษร ป้องกันสระหาย */
-                // ❌ ลบ foreignObjectRendering ออก → สาเหตุภาพดำ!
-                windowWidth: 800,
-                onclone: function(clonedDoc) {
-                    const clonedContainer = clonedDoc.getElementById('template-container');
-                    const clonedDate = clonedDoc.getElementById('date-overlay');
-                    const clonedRoute = clonedDoc.getElementById('display-route');
-                    const clonedKm = clonedDoc.getElementById('display-km');
-                    clonedContainer.style.transform = 'none';
-                    clonedDate.style.fontSize = '32px';
-                    clonedDate.style.top = '130px';
-                    clonedDate.style.left = '0';
-                    clonedDate.style.width = '100%';
-                    clonedDate.style.height = '44px';
-                    clonedDate.style.display = 'flex';
-                    clonedDate.style.justifyContent = 'center';
-                    clonedDate.style.alignItems = 'center';
-                    clonedDate.style.transform = 'none';
-                    clonedRoute.style.fontFamily = "'Sarabun', sans-serif";
-                    clonedRoute.style.fontSize = '26px';
-                    clonedRoute.style.letterSpacing = '0.7px';
-                    clonedRoute.style.overflow = 'visible';
-                    clonedKm.style.fontFamily = "'Sarabun', sans-serif";
-                    clonedKm.style.fontSize = '28px';
-                    clonedKm.style.overflow = 'visible';
-                }
-            }).then(canvas => {
-                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-                const link = document.createElement('a');
-                link.download = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH')}.jpg`;
-                if (isIOS) {
-                    const newTab = window.open();
-                    if (newTab) {
-                        newTab.document.write(`
-                        <html>
-                        <body style="margin:0;display:flex;justify-content:center;background:#000;">
-                            <img src="${imageDataUrl}" style="max-width:100%;height:auto;" />
-                            <script>
-                                document.body.onload = setTimeout(() => {
-                                    alert('✅ กดค้างที่ภาพ → เลือก "บันทึกในรูปภาพ"');
-                                }, 500);
-                            <\/script>
-                        </body>
-                        </html>`);
-                        newTab.document.close();
-                    } else {
-                        alert('⚠️ กรุณาอนุญาตหน้าต่างป๊อปอัพ แล้วลองใหม่อีกครั้ง');
-                    }
-                } else {
-                    link.href = imageDataUrl;
-                    link.click();
-                }
-            });
+    const container = document.getElementById('template-container');
+    
+    // ✅ รอฟอนต์โหลดเสร็จก่อนแคป — สำคัญ!
+    if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+        await new Promise(resolve => setTimeout(resolve, 500)); // รอเพิ่มอีกนิด
+    }
+    
+    html2canvas(container, {
+        scale: window.devicePixelRatio || 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        letterRendering: true, 
+        windowWidth: 800,
+        onclone: function(clonedDoc) {
+            const clonedContainer = clonedDoc.getElementById('template-container');
+            const clonedDate = clonedDoc.getElementById('date-overlay');
+            // เราไม่จำเป็นต้องดึง clonedRoute กับ clonedKm มาตั้งค่าใหม่แล้ว ให้ใช้ค่าที่แสดงบนหน้าจอได้เลย
+
+            clonedContainer.style.transform = 'none';
+            clonedDate.style.fontSize = '32px';
+            clonedDate.style.top = '130px';
+            clonedDate.style.left = '0';
+            clonedDate.style.width = '100%';
+            clonedDate.style.height = '44px';
+            clonedDate.style.display = 'flex';
+            clonedDate.style.justifyContent = 'center';
+            clonedDate.style.alignItems = 'center';
+            clonedDate.style.transform = 'none';
+
+            // ❌ ลบการตั้งค่า clonedRoute และ clonedKm ตรงนี้ออกทั้งหมด
+            // เพื่อให้มันใช้ขนาดฟอนต์ที่ถูกคำนวณย่อมาแล้ว และใช้ overflow: hidden ที่เขียนไว้ใน CSS
         }
+    }).then(canvas => {
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const link = document.createElement('a');
+        link.download = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH')}.jpg`;
+        if (isIOS) {
+            const newTab = window.open();
+            if (newTab) {
+                newTab.document.write(`
+                <html>
+                <body style="margin:0;display:flex;justify-content:center;background:#000;">
+                    <img src="${imageDataUrl}" style="max-width:100%;height:auto;" />
+                    <script>
+                        document.body.onload = setTimeout(() => {
+                            alert('✅ กดค้างที่ภาพ → เลือก "บันทึกในรูปภาพ"');
+                        }, 500);
+                    <\/script>
+                </body>
+                </html>`);
+                newTab.document.close();
+            } else {
+                alert('⚠️ กรุณาอนุญาตหน้าต่างป๊อปอัพ แล้วลองใหม่อีกครั้ง');
+            }
+        } else {
+            link.href = imageDataUrl;
+            link.click();
+        }
+    });
+}
         window.addEventListener('DOMContentLoaded', function() {
             initRouteDropdown();
             updateText();
