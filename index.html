@@ -59,15 +59,19 @@
 #display-task {
     font-size: 30px;
     font-weight: 700;
+    line-height: 1.4;       /* ✅ เพิ่มความสูงบรรทัด */
+    padding-bottom: 8px;    /* ✅ เพิ่มพื้นที่กันสระล่างหาย */
 }
 #display-route, #display-km {
     font-size: 26px;
     font-weight: 700;
     white-space: nowrap;
     width: 100%;
-    overflow: hidden;       /* ✅ ป้องกันข้อความล้นกล่อง */
-    text-overflow: ellipsis; /* ✅ ถ้ายาวเกินจะมี ... ไม่ล้น */
-    letter-spacing: 0.5px;  /* ✅ ลดช่องว่างเล็กน้อย */
+    overflow: hidden;       
+    text-overflow: ellipsis; 
+    letter-spacing: 0.5px;  
+    line-height: 1.4;       /* ✅ เพิ่มความสูงบรรทัด */
+    padding-bottom: 8px;    /* ✅ เพิ่มพื้นที่กันสระล่างหาย */
 }
 #image-grid {
     position: absolute;
