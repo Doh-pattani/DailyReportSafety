@@ -349,64 +349,80 @@
         }
         
         async function exportImage() {
-            const container = document.getElementById('template-container');
-            
-            if (document.fonts && document.fonts.ready) {
-                await document.fonts.ready;
-                await new Promise(resolve => setTimeout(resolve, 500));
-            }
-            
-            html2canvas(container, {
-                scale: window.devicePixelRatio || 2,
-                useCORS: true,
-                allowTaint: false,
-                logging: false,
-                letterRendering: true, 
-                windowWidth: 800,
-                onclone: function(clonedDoc) {
-                    const clonedContainer = clonedDoc.getElementById('template-container');
-                    const clonedDate = clonedDoc.getElementById('date-overlay');
+    const container = document.getElementById('template-container');
+    
+    // รอฟอนต์โหลดเสร็จก่อนแคป
+    if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    // ✅ 1. เก็บค่าเดิม และปลดสเกลหน้าจอชั่วคราว (แก้บัค iOS ข้อความ/รูป หาย)
+    const originalTransform = container.style.transform;
+    container.style.transform = 'none';
+    
+    // บังคับให้เบราว์เซอร์จัดเรนเดอร์เลย์เอาต์ใหม่ให้เสร็จก่อนแคปภาพ (รอ 100ms)
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    html2canvas(container, {
+        scale: window.devicePixelRatio || 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        letterRendering: true, 
+        windowWidth: 800,
+        scrollY: 0, // ✅ ป้องกันบัคหน้าจอเลื่อนแล้วภาพดำ/ของหาย
+        onclone: function(clonedDoc) {
+            const clonedDate = clonedDoc.getElementById('date-overlay');
 
-                    clonedContainer.style.transform = 'none';
-                    clonedDate.style.fontSize = '32px';
-                    clonedDate.style.top = '130px';
-                    clonedDate.style.left = '0';
-                    clonedDate.style.width = '100%';
-                    clonedDate.style.height = '44px';
-                    clonedDate.style.display = 'flex';
-                    clonedDate.style.justifyContent = 'center';
-                    clonedDate.style.alignItems = 'center';
-                    clonedDate.style.transform = 'none';
-                }
-            }).then(canvas => {
-                canvas.toBlob(async (blob) => {
-                    if (!blob) return;
-                    const fileName = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.jpg`;
-                    
-                    if (navigator.share) {
-                        const file = new File([blob], fileName, { type: 'image/jpeg' });
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            try {
-                                await navigator.share({
-                                    files: [file],
-                                    title: 'บันทึกรูปรายงาน'
-                                });
-                                return;
-                            } catch (error) {
-                                console.log('ผู้ใช้ยกเลิกการแชร์ หรือ Share API ล้มเหลว:', error);
-                            }
-                        }
-                    }
-
-                    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-                    const link = document.createElement('a');
-                    link.download = fileName;
-                    link.href = imageDataUrl;
-                    link.click();
-                    
-                }, 'image/jpeg', 0.95);
-            });
+            clonedDate.style.fontSize = '32px';
+            clonedDate.style.top = '130px';
+            clonedDate.style.left = '0';
+            clonedDate.style.width = '100%';
+            clonedDate.style.height = '44px';
+            clonedDate.style.display = 'flex';
+            clonedDate.style.justifyContent = 'center';
+            clonedDate.style.alignItems = 'center';
+            clonedDate.style.transform = 'none';
         }
+    }).then(canvas => {
+        // ✅ 2. คืนค่าสเกลกลับให้หน้าจอเล็กเหมือนเดิมทันทีที่แคปเสร็จ
+        container.style.transform = originalTransform;
+        
+        canvas.toBlob(async (blob) => {
+            if (!blob) return;
+            const fileName = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.jpg`;
+            
+            // ใช้ Web Share API เด้งหน้าต่างแชร์ลงไลน์
+            if (navigator.share) {
+                const file = new File([blob], fileName, { type: 'image/jpeg' });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'บันทึกรูปรายงาน'
+                        });
+                        return;
+                    } catch (error) {
+                        console.log('ผู้ใช้ยกเลิกการแชร์ หรือ Share API ล้มเหลว:', error);
+                    }
+                }
+            }
+
+            // สำรองกรณีที่ Share API ไม่ทำงาน ให้โหลดลงเครื่องปกติ
+            const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = imageDataUrl;
+            link.click();
+            
+        }, 'image/jpeg', 0.95);
+    }).catch(err => {
+        // กรณีเกิด error ก็ต้องคืนค่าหน้าจอกลับด้วย
+        container.style.transform = originalTransform;
+        console.error("เกิดข้อผิดพลาดในการสร้างรูป:", err);
+    });
+}
 
         window.addEventListener('DOMContentLoaded', function() {
             initRouteDropdown();
