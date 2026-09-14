@@ -152,11 +152,17 @@
                     <label class="block text-gray-700 font-bold mb-2">อัปโหลดรูปหน้างาน (เลือกพร้อมกัน 2-4 รูป)</label>
                     <input type="file" id="image-upload" accept="image/*" multiple class="w-full p-2 border rounded" onchange="handleImages()">
                 </div>
-                <button onclick="exportImage()" class="w-full bg-[#06C755] hover:bg-[#05a346] text-white font-bold py-3 px-4 rounded mt-4 flex justify-center items-center gap-2 transition-colors duration-200 shadow-sm">
+                <!-- ปุ่มแชร์ลง Line (สำหรับมือถือ) -->
+                <button onclick="exportImage('share')" class="w-full bg-[#06C755] hover:bg-[#05a346] text-white font-bold py-3 px-4 rounded mt-4 flex justify-center items-center gap-2 transition-colors duration-200 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 24px; height: 24px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185z" />
                     </svg>
                     แชร์รูปนี้ลงกลุ่ม Line
+                </button>
+
+                <!-- ปุ่มจัดเก็บลงเครื่อง (สำหรับ PC หรือบันทึกปกติ) -->
+                <button onclick="exportImage('download')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mt-2 flex justify-center items-center gap-2 transition-colors duration-200 shadow-sm">
+                    📥 จัดเก็บลงเครื่อง
                 </button>
             </div>
         </div>
@@ -349,66 +355,67 @@
             }
         }
         
-        async function exportImage() {
-    const container = document.getElementById('template-container');
-    
-    // รอฟอนต์โหลดเสร็จก่อนแคป
-    if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
-        await new Promise(resolve => setTimeout(resolve, 500));
-    }
-    
-    // ✅ 1. เก็บค่าเดิม และปลดสเกลหน้าจอชั่วคราว (แก้บัค iOS ข้อความ/รูป หาย)
-    const originalTransform = container.style.transform;
-    container.style.transform = 'none';
-    
-    // บังคับให้เบราว์เซอร์จัดเรนเดอร์เลย์เอาต์ใหม่ให้เสร็จก่อนแคปภาพ (รอ 100ms)
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    html2canvas(container, {
-        scale: window.devicePixelRatio || 2,
-        useCORS: true,
-        allowTaint: false,
-        logging: false,
-        letterRendering: true, 
-        windowWidth: 800,
-        scrollY: 0, // ✅ ป้องกันบัคหน้าจอเลื่อนแล้วภาพดำ/ของหาย
-        onclone: function(clonedDoc) {
-            const clonedDate = clonedDoc.getElementById('date-overlay');
-
-            clonedDate.style.fontSize = '32px';
-            clonedDate.style.top = '130px';
-            clonedDate.style.left = '0';
-            clonedDate.style.width = '100%';
-            clonedDate.style.height = '44px';
-            clonedDate.style.display = 'flex';
-            clonedDate.style.justifyContent = 'center';
-            clonedDate.style.alignItems = 'center';
-            clonedDate.style.transform = 'none';
-        }
-    }).then(canvas => {
-        // ✅ 2. คืนค่าสเกลกลับให้หน้าจอเล็กเหมือนเดิมทันทีที่แคปเสร็จ
-        container.style.transform = originalTransform;
-        
-        canvas.toBlob(async (blob) => {
-            if (!blob) return;
-            const fileName = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.jpg`;
+        async function exportImage(action = 'download') {
+            const container = document.getElementById('template-container');
             
-            // ใช้ Web Share API เด้งหน้าต่างแชร์ลงไลน์
-            if (navigator.share) {
-                const file = new File([blob], fileName, { type: 'image/jpeg' });
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    try {
-                        await navigator.share({
-                            files: [file],
-                            title: 'บันทึกรูปรายงาน'
-                        });
-                        return;
-                    } catch (error) {
-                        console.log('ผู้ใช้ยกเลิกการแชร์ หรือ Share API ล้มเหลว:', error);
-                    }
-                }
+            if (document.fonts && document.fonts.ready) {
+                await document.fonts.ready;
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
+            
+            html2canvas(container, {
+                scale: window.devicePixelRatio || 2,
+                useCORS: true,
+                allowTaint: false,
+                logging: false,
+                letterRendering: true, 
+                windowWidth: 800,
+                onclone: function(clonedDoc) {
+                    const clonedContainer = clonedDoc.getElementById('template-container');
+                    const clonedDate = clonedDoc.getElementById('date-overlay');
+
+                    clonedContainer.style.transform = 'none';
+                    clonedDate.style.fontSize = '32px';
+                    clonedDate.style.top = '130px';
+                    clonedDate.style.left = '0';
+                    clonedDate.style.width = '100%';
+                    clonedDate.style.height = '44px';
+                    clonedDate.style.display = 'flex';
+                    clonedDate.style.justifyContent = 'center';
+                    clonedDate.style.alignItems = 'center';
+                    clonedDate.style.transform = 'none';
+                }
+            }).then(canvas => {
+                canvas.toBlob(async (blob) => {
+                    if (!blob) return;
+                    const fileName = `รายงานประจำวัน_${new Date().toLocaleDateString('th-TH').replace(/\//g, '-')}.jpg`;
+                    
+                    // หากผู้ใช้กดปุ่ม 'แชร์' และเบราว์เซอร์รองรับ
+                    if (action === 'share' && navigator.share) {
+                        const file = new File([blob], fileName, { type: 'image/jpeg' });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share({
+                                    files: [file],
+                                    title: 'บันทึกรูปรายงาน'
+                                });
+                                return; // ออกจากฟังก์ชันถ้าแชร์สำเร็จ
+                            } catch (error) {
+                                console.log('ผู้ใช้ยกเลิกการแชร์ หรือ Share API ล้มเหลว:', error);
+                            }
+                        }
+                    }
+
+                    // หากผู้ใช้กด 'จัดเก็บลงเครื่อง' หรือ Share API ล้มเหลว จะเข้าสู่โหมดดาวน์โหลดแทน
+                    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                    const link = document.createElement('a');
+                    link.download = fileName;
+                    link.href = imageDataUrl;
+                    link.click();
+                    
+                }, 'image/jpeg', 0.95);
+            });
+        }
 
             // สำรองกรณีที่ Share API ไม่ทำงาน ให้โหลดลงเครื่องปกติ
             const imageDataUrl = canvas.toDataURL('image/jpeg', 0.95);
