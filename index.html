@@ -68,11 +68,12 @@
     font-weight: 700;
     white-space: nowrap;
     width: 100%;
-    overflow: hidden;       
-    text-overflow: ellipsis; 
-    letter-spacing: 0.5px;  
-    line-height: 1.4;
-    padding-bottom: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.5px;
+    line-height: 1.5;         /* ✅ ขยายความสูงบรรทัดขึ้นเล็กน้อย */
+    padding-bottom: 15px;     /* ✅ เพิ่มพื้นที่ด้านล่างให้พ้นหางสระอูอย่างเด็ดขาด */
+    margin-bottom: -7px;      /* ✅ ดึงบรรทัดล่างกลับขึ้นมา เพื่อไม่ให้ข้อความห่างกันเกินไป */
 }
 #image-grid {
     position: absolute;
