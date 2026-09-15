@@ -46,13 +46,13 @@
     top: 265px;
     left: 15px;
     width: 520px;
-    height: 170px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 10px;
+    gap: 8px; /* 💡 ลดช่องไฟ (gap) ลงนิดนึง เพราะบรรทัดเพิ่มขึ้น */
     color: #000;
     z-index: 10;
 	/* border: 2px solid red; *//* � เพิ่มบรรทัดนี้: สร้างกรอบสีแดงชั่วคราว */
@@ -63,8 +63,8 @@
     line-height: 1.4;
     padding-bottom: 8px;
 }
-#display-route, #display-km {
-    font-size: 26px;
+#display-route, #display-section, #display-km {
+    font-size: 28px;
     font-weight: 700;
     white-space: nowrap;
     width: 100%;
@@ -85,8 +85,8 @@
 }
 .img-wrapper {
     display: inline-block;
-    width: 345px;
-    height: 255px;
+    width: 350px;
+    height: 260px;
     margin: 5px;
     vertical-align: top;
 }
@@ -109,10 +109,47 @@
 <body class="bg-gray-100 p-8 font-sans">
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         <div class="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md h-fit">
-			<div class="mb-2 text-blue-800 font-bold">ทางหลวงปลอดภัย ขับขี่สบายตา</div>
-            <h2 class="text-2xl font-bold mb-6 text-blue-800">สร้างรูปรายงาน</h2>
+            
+            <!-- 💡 [เริ่มปรับแต่ง] จัดกลุ่มโลโก้และข้อความให้อยู่คู่กันแบบ Flexbox -->
+            <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
+                
+                <!-- 💡 [แก้ไข] โลโก้ทางหลวง สไตล์ Emoji (🛣️) -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 flex-shrink-0 drop-shadow-md" viewBox="0 0 100 100">
+                    <!-- ท้องฟ้า -->
+                    <rect width="100" height="100" rx="16" fill="#bae6fd" />
+                    <!-- พื้นหญ้าข้างทาง -->
+                    <path d="M0 60 L100 60 L100 100 L0 100 Z" fill="#86efac" />
+                    <!-- พื้นถนน -->
+                    <path d="M35 60 L5 100 H95 L65 60 Z" fill="#4b5563" />
+                    <!-- เส้นขอบถนน (สีขาว) -->
+                    <path d="M38 60 L12 100" stroke="#f8fafc" stroke-width="2" />
+                    <path d="M62 60 L88 100" stroke="#f8fafc" stroke-width="2" />
+                    <!-- เส้นปะกลางถนน (สีเหลือง) -->
+                    <path d="M50 60 L50 100" stroke="#fbbf24" stroke-width="4" stroke-dasharray="6 6" />
+                    <!-- เสาป้าย Overhead -->
+                    <rect x="25" y="25" width="4" height="40" fill="#9ca3af" />
+                    <rect x="71" y="25" width="4" height="40" fill="#9ca3af" />
+                    <!-- แผ่นป้ายทางหลวง (สีเขียว) -->
+                    <rect x="18" y="25" width="64" height="22" rx="4" fill="#16a34a" />
+                    <!-- ข้อความ/ลูกศรบนป้ายจำลอง (สีขาว) -->
+                    <rect x="24" y="30" width="18" height="3" rx="1.5" fill="#ffffff" />
+                    <rect x="58" y="30" width="18" height="3" rx="1.5" fill="#ffffff" />
+                    <polygon points="33,37 29,43 37,43" fill="#ffffff" />
+                    <polygon points="67,37 63,43 71,43" fill="#ffffff" />
+                </svg>
+
+                <!-- 2. กลุ่มข้อความหัวข้อ -->
+                <div>
+                    <div class="text-sm text-blue-500 font-bold mb-1 tracking-wide">ทางหลวงปลอดภัย ขับขี่สบายตา</div>
+                    <h2 class="text-2xl font-black text-blue-900 leading-none">สร้างรูปรายงาน</h2>
+                </div>
+                
+            </div>
+            <!-- 💡 [จบการปรับแต่ง] -->
+
             <div class="space-y-4">
                 <div>
+                    <!-- โค้ดช่องกรอกข้อมูลอื่นๆ ของศิษย์นิคต่อจากตรงนี้... -->
                     <label class="block text-gray-700 font-bold mb-2">เลือกหน่วยงาน</label>
                     <select id="unit-select" class="w-full p-2 border rounded" onchange="changeTemplate()">
                         <option value="bg-khokpho.png">หมวดทางหลวงโคกโพธิ์</option>
@@ -175,6 +212,7 @@
 				<div id="info-box-overlay">
 				    <p id="display-task">-</p>
 				    <p id="display-route">-</p>
+					<p id="display-section">-</p>
 				    <p id="display-km">-</p>
 				</div>
                 <div id="image-grid"></div>
@@ -269,44 +307,54 @@
         }
         function updateText() {                
             try {
-                let taskInput = document.getElementById('task-name');                
-                let kmInput = document.getElementById('km-text');                
-                let routeSelect = document.getElementById('route-select');                
+                let taskInput = document.getElementById('task-name');
+                let kmInput = document.getElementById('km-text');
+                let routeSelect = document.getElementById('route-select');
                 let sectionSelect = document.getElementById('section-select');
 
                 let task = taskInput ? taskInput.value : '';                
-                let km = kmInput ? kmInput.value : '';                
+                let km = kmInput ? kmInput.value : '';
                 let routeVal = routeSelect ? routeSelect.value : '';                
-                let sectionVal = sectionSelect ? sectionSelect.value : '';                                
-                let routeText = 'ทางหลวงหมายเลข';
+                let sectionVal = sectionSelect ? sectionSelect.value : '';
+				
+                // 💡 [แก้ไข] แยกสายทาง กับ ตอน ออกจากกันเด็ดขาด
+                let routeText = '-';
+                let sectionText = '-';
 
+                // 💡 ถ้ามีการเลือกสายทาง ให้ "แทนที่" ค่าเดิม (ห้ามใช้ +=)
                 if (routeVal !== '') {                    
-                    routeText += ' ' + routeVal;                    
-                    if (sectionVal !== '') {                        
-                        routeText += ' ตอน ' + sectionVal;                    
-                    }
-                } else {
-                    routeText = '-';
+                    routeText = 'ทางหลวงหมายเลข ' + routeVal;
                 }
+                
+                // 💡 ถ้ามีการเลือกตอน ให้ "แทนที่" ค่าเดิม (ห้ามใช้ +=)
+                if (sectionVal !== '') {
+                    sectionText = 'ตอน ' + sectionVal;
+                }
+                
 
                 task = task || '-';                
                 km = km || '-';
 
                 const elTask = document.getElementById('display-task');
                 const elRoute = document.getElementById('display-route');
+				const elSection = document.getElementById('display-section'); // 💡 ดึงอ็อบเจกต์ใหม่
                 const elKm = document.getElementById('display-km');
 
-                elTask.innerText = task;                
-                elRoute.innerText = routeText;                
+                elTask.innerText = task;
+                elRoute.innerText = routeText;
+				elSection.innerText = sectionText; // 💡 โยนค่าลงไป
                 elKm.innerText = km;
 
+				// 💡 สั่งปรับขนาดตัวอักษรอัตโนมัติ (เผื่อชื่อตอนยาวเกินไป)
                 adjustFontSize(elTask, 30, 24);
-                adjustFontSize(elRoute, 26, 20);
+                adjustFontSize(elRoute, 28, 22);
+				adjustFontSize(elSection, 28, 22);
                 adjustFontSize(elKm, 28, 22);
 
                 setTimeout(() => {
                     adjustFontSize(elTask, 30, 24);
-                    adjustFontSize(elRoute, 26, 20);
+                    adjustFontSize(elRoute, 28, 22);
+					adjustFontSize(elSection, 28, 22);
                     adjustFontSize(elKm, 28, 22);
                 }, 50);
 
