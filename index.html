@@ -361,50 +361,50 @@
                 let km = kmInput ? kmInput.value : '';
                 let routeVal = routeSelect ? routeSelect.value : '';                
                 let sectionVal = sectionSelect ? sectionSelect.value : '';
-				
-                // 💡 [แก้ไข] แยกสายทาง กับ ตอน ออกจากกันเด็ดขาด
-                let routeText = '-';
-                let sectionText = '-';
-
-                // 💡 ถ้ามีการเลือกสายทาง ให้ "แทนที่" ค่าเดิม (ห้ามใช้ +=)
-                if (routeVal !== '') {                    
-                    routeText = 'ทางหลวงหมายเลข ' + routeVal;
-                }
-                
-                // 💡 ถ้ามีการเลือกตอน ให้ "แทนที่" ค่าเดิม (ห้ามใช้ +=)
-                if (sectionVal !== '') {
-                    sectionText = 'ตอน ' + sectionVal;
-                }
-                
 
                 task = task || '-';                
                 km = km || '-';
 
                 const elTask = document.getElementById('display-task');
                 const elRoute = document.getElementById('display-route');
-				const elSection = document.getElementById('display-section'); // 💡 ดึงอ็อบเจกต์ใหม่
+                const elSection = document.getElementById('display-section'); 
                 const elKm = document.getElementById('display-km');
 
+                // อัปเดตชื่องาน และ กม. เสมอ
                 elTask.innerText = task;
-                elRoute.innerText = routeText;
-				elSection.innerText = sectionText; // 💡 โยนค่าลงไป
                 elKm.innerText = km;
 
-				// 💡 สั่งปรับขนาดตัวอักษรอัตโนมัติ (เผื่อชื่อตอนยาวเกินไป)
+                // 💡 [ซ่อนบรรทัดสายทาง] ถ้าไม่มีข้อมูล ให้ยุบกล่องทิ้งไปเลย
+                if (routeVal !== '') {
+                    elRoute.innerText = 'ทางหลวงหมายเลข ' + routeVal;
+                    elRoute.style.display = 'block';
+                } else {
+                    elRoute.style.display = 'none';
+                }
+
+                // 💡 [ซ่อนบรรทัดชื่อตอน] ถ้าไม่มีข้อมูล ให้ยุบกล่องทิ้งไปเลย
+                if (sectionVal !== '') {
+                    elSection.innerText = 'ตอน ' + sectionVal;
+                    elSection.style.display = 'block';
+                } else {
+                    elSection.style.display = 'none';
+                }
+
+                // สั่งปรับขนาดตัวอักษรอัตโนมัติ
                 adjustFontSize(elTask, 30, 24);
-                adjustFontSize(elRoute, 28, 22);
-				adjustFontSize(elSection, 28, 22);
+                if (routeVal !== '') adjustFontSize(elRoute, 28, 22);
+                if (sectionVal !== '') adjustFontSize(elSection, 28, 22);
                 adjustFontSize(elKm, 28, 22);
 
                 setTimeout(() => {
                     adjustFontSize(elTask, 30, 24);
-                    adjustFontSize(elRoute, 28, 22);
-					adjustFontSize(elSection, 28, 22);
+                    if (routeVal !== '') adjustFontSize(elRoute, 28, 22);
+                    if (sectionVal !== '') adjustFontSize(elSection, 28, 22);
                     adjustFontSize(elKm, 28, 22);
                 }, 50);
 
             } catch (error) {                
-                console.log("พบปัญหาการอัปเดตข้อความ:", error);		
+                console.log("พบปัญหาการอัปเดตข้อความ:", error);        
             }
         }
         function handleImages() {
