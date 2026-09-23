@@ -537,8 +537,7 @@
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
                             try {
                                 await navigator.share({
-                                    files: [file],
-                                    title: 'บันทึกรูปรายงาน'
+                                    files: [file]
                                 });
                                 return; 
                             } catch (error) {
