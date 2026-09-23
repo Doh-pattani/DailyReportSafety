@@ -195,9 +195,41 @@
                     <label class="block text-gray-700 font-bold mb-2">กม. ที่ดำเนินงาน</label>
                     <input type="text" id="km-text" class="w-full p-2 border rounded" placeholder="เช่น กม.106+950 - กม.108+850" onkeyup="updateText()">
                 </div>
+<!-- แผน 2: แบบจิ้มเลือกทีละกล่อง (รองรับ Tailwind CSS) -->
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">อัปโหลดรูปหน้างาน (เลือกพร้อมกัน 2-4 รูป)</label>
-                    <input type="file" id="image-upload" accept="image/*" multiple class="w-full p-2 border rounded" onchange="handleImages()">
+                    <label class="block text-gray-700 font-bold mb-2">อัปโหลดรูปหน้างาน (จิ้มเลือกตามลำดับ)</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        
+                        <!-- กล่องที่ 1 -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50 transition-colors relative" onclick="document.getElementById('file1').click()">
+                            <input type="file" id="file1" accept="image/*" class="hidden" onchange="handleImages()">
+                            <div id="text1" class="text-sm text-gray-500 py-4">📷<br>1. ก่อนทำ</div>
+                            <img id="prev1" src="" class="hidden w-full h-24 object-cover rounded">
+                        </div>
+
+                        <!-- กล่องที่ 2 -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50 transition-colors relative" onclick="document.getElementById('file2').click()">
+                            <input type="file" id="file2" accept="image/*" class="hidden" onchange="handleImages()">
+                            <div id="text2" class="text-sm text-gray-500 py-4">📷<br>2. ระหว่างทำ</div>
+                            <img id="prev2" src="" class="hidden w-full h-24 object-cover rounded">
+                        </div>
+
+                        <!-- กล่องที่ 3 -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50 transition-colors relative" onclick="document.getElementById('file3').click()">
+                            <input type="file" id="file3" accept="image/*" class="hidden" onchange="handleImages()">
+                            <div id="text3" class="text-sm text-gray-500 py-4">📷<br>3. หลังทำ</div>
+                            <img id="prev3" src="" class="hidden w-full h-24 object-cover rounded">
+                        </div>
+
+                        <!-- กล่องที่ 4 -->
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center cursor-pointer hover:bg-gray-50 transition-colors relative" onclick="document.getElementById('file4').click()">
+                            <input type="file" id="file4" accept="image/*" class="hidden" onchange="handleImages()">
+                            <div id="text4" class="text-sm text-gray-500 py-4">📷<br>4. เพิ่มเติม</div>
+                            <img id="prev4" src="" class="hidden w-full h-24 object-cover rounded">
+                        </div>
+
+                    </div>
+                    <p class="text-xs text-red-500 mt-2">* เลือกรูปใส่ทีละกล่องเพื่อป้องกันปัญหารูปสลับตำแหน่งบนมือถือ</p>
                 </div>
                 
                 <!-- ปุ่มแชร์ลง Line -->
@@ -376,28 +408,71 @@
             }
         }
         function handleImages() {
-            const files = document.getElementById('image-upload').files;
+            // ดึงข้อมูล input ทั้ง 4 ช่องมาเตรียมไว้
+            const fileInputs = [
+                document.getElementById('file1'),
+                document.getElementById('file2'),
+                document.getElementById('file3'),
+                document.getElementById('file4')
+            ];
+            
             const grid = document.getElementById('image-grid');
             grid.innerHTML = ''; 
             grid.className = ''; 
-            const limit = Math.min(files.length, 4);
+            
+            let validFiles = []; // เก็บเฉพาะไฟล์ที่ถูกเลือกจริงๆ
+            
+            // 💡 ขั้นตอนที่ 1: โชว์รูปพรีวิวในกล่อง 1-2-3-4
+            fileInputs.forEach((input, index) => {
+                const num = index + 1;
+                const imgElem = document.getElementById('prev' + num);
+                const textElem = document.getElementById('text' + num);
+                
+                if (input.files && input.files[0]) {
+                    const file = input.files[0];
+                    validFiles.push(file); // ส่งไฟล์เข้าคิวไปทำรายงาน
+                    
+                    // อ่านรูปมาโชว์ในกล่องฟอร์ม
+                    const readerLocal = new FileReader();
+                    readerLocal.onload = function(e) {
+                        imgElem.src = e.target.result;
+                        imgElem.classList.remove('hidden'); // โชว์รูป
+                        textElem.classList.add('hidden');   // ซ่อนข้อความ 📷
+                    }
+                    readerLocal.readAsDataURL(file);
+                } else {
+                    // ถ้ายังไม่มีรูป ให้กลับไปโชว์ข้อความเหมือนเดิม
+                    imgElem.src = '';
+                    imgElem.classList.add('hidden');
+                    textElem.classList.remove('hidden');
+                }
+            });
+
+            // 💡 ขั้นตอนที่ 2: เอารูปที่เลือกมาจัดเรียงลงในใบรายงาน (image-grid) แบบล็อคตำแหน่ง (แก้พิษกู่)
+            const limit = validFiles.length;
+            if (limit === 0) return; // ถ้าไม่มีรูปเลย ไม่ต้องทำอะไร
+
             if (limit === 3) grid.classList.add('three-images');
             if (limit === 2) grid.classList.add('two-images');
+            
             for (let i = 0; i < limit; i++) {
-                const file = files[i];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'img-wrapper';
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'uploaded-img';
-                        wrapper.appendChild(img);
-                        grid.appendChild(wrapper);
-                    }
-                    reader.readAsDataURL(file);
+                const file = validFiles[i];
+                
+                // สร้างกล่องและรูป "จองที่" ทิ้งไว้ในใบรายงานเลย
+                const wrapper = document.createElement('div');
+                wrapper.className = 'img-wrapper';
+                const img = document.createElement('img');
+                img.className = 'uploaded-img';
+                
+                wrapper.appendChild(img);
+                grid.appendChild(wrapper); // แปะลงกระดาษ 100% ตรงคิวแน่นอน
+
+                // ค่อยให้อ่านไฟล์มาแทรกลงในกล่องที่จองไว้
+                const readerGrid = new FileReader();
+                readerGrid.onload = function(e) {
+                    img.src = e.target.result; 
                 }
+                readerGrid.readAsDataURL(file);
             }
         }
         function adjustScale() {
